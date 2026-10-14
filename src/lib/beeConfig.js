@@ -69,7 +69,7 @@ export const BEE_THEME = {
   cream: "#F6EDDA",
   ink: "#503E2B",
   edge: "#94622E",
-  icon: "#A76B24",
+  icon: "#d54b1d",
 };
 
 // Both sector colors live here; the completed circle uses BEE_THEME.honey.
@@ -95,11 +95,11 @@ export const DESKTOP_HIVE = {
     steam: { x: 1217.5, y: 564, width: 213, height: 202 },
   },
 };
-export const DESKTOP_FLIP_DURATION = 0.55;
+export const DESKTOP_FLIP_DURATION = 1;
 
 // Seconds, rather than scroll positions. Change INTRO_DURATION to retime everything.
-export const INTRO_DURATION = 17.6;
-export const ENTRANCE_DELAY = 0.8;
+export const INTRO_DURATION = 14;
+export const ENTRANCE_DELAY = 0.5;
 // Timeline coordinates stay fixed; INTRO_DURATION changes the playback speed.
 export const STORY_DURATION = 16.8 + ENTRANCE_DELAY;
 export const DISC_RADIUS = 1.95;

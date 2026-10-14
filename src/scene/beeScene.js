@@ -221,22 +221,102 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
     object.name = `intro-sector-${i}`;
     return object;
   });
-  function renderProof(t) {
-    proof.visible = t >= 5.05 && t < 13.08;
-    if (!proof.visible) return;
-    const p = introProofProgress(t);
-    const strength = between(t, 5.05, 5.75);
-    const union = between(t, 12.1, 12.9);
-    sectorMats.forEach(m => { m.opacity = strength; });
-    sectorMats[0].color.set(SECTOR_COLORS[0]).lerp(new THREE.Color(BEE_THEME.honey), union);
-    sectorMats[1].color.set(SECTOR_COLORS[1]).lerp(new THREE.Color(BEE_THEME.honey), union);
-    sectors.forEach((object, i) => {
-      const outline = proofPoints(i, p).map(v => ({ x: v.x / 172 * DISC_RADIUS, y: -v.y / 172 * DISC_RADIUS }));
-      // y inversion reverses winding.
-      outline.reverse();
-      updatePrism(object.geometry, outline, 0.24, 0.008 * (1 - union));
-    });
-  }
+function renderProof(t) {
+  proof.visible = t >= 5.05 && t < 13.08;
+  if (!proof.visible) return;
+
+  const originalP = introProofProgress(t);
+
+  const strength = between(t, 5.05, 5.75);
+  const union = between(t, 12.1, 12.9);
+
+  sectorMats.forEach(m => {
+    m.opacity = strength;
+  });
+
+  sectorMats[0].color
+    .set(SECTOR_COLORS[0])
+    .lerp(new THREE.Color(BEE_THEME.honey), union);
+
+  sectorMats[1].color
+    .set(SECTOR_COLORS[1])
+    .lerp(new THREE.Color(BEE_THEME.honey), union);
+
+  // 1) scatter
+  const scatterOut = between(t, 5.05, 5.8);
+
+  // 2) الرجوع للمستطيل
+  const settle = between(t, 5.8, 7.3);
+
+  // 3) بعد ما يكتمل المستطيل نرجع للحركة الأصلية
+  const continueOriginal = between(t, 7.3, 8.0);
+
+  // p = 0.38 هو وضع المستطيل المرتب في geometry.js
+  const rectangleP = 0.38;
+
+  // خلال التناثر والرجوع: نثبت الشكل على المستطيل
+  // وبعدها نسمح للأنيميشن الأصلي يكمل
+  const p =
+    t < 7.3
+      ? rectangleP
+      : lerp(rectangleP, originalP, continueOriginal);
+
+  sectors.forEach((object, i) => {
+    const outline = proofPoints(i, p).map(v => ({
+      x: v.x / 172 * DISC_RADIUS,
+      y: -v.y / 172 * DISC_RADIUS,
+    }));
+
+    outline.reverse();
+
+    updatePrism(
+      object.geometry,
+      outline,
+      0.24,
+      0.008 * (1 - union)
+    );
+
+    // Scatter offsets
+    const center = (SECTOR_COUNT - 1) / 2;
+    const fromCenter = i - center;
+
+    const wave1 = Math.sin(i * 2.17);
+    const wave2 = Math.cos(i * 1.43);
+
+    const scatterAmount =
+      scatterOut * (1 - settle);
+
+    const offsetX =
+      Math.sign(fromCenter || 1) *
+      (0.15 + Math.abs(fromCenter) * 0.025) *
+      scatterAmount;
+
+    const offsetY =
+      wave1 *
+      0.75 *
+      scatterAmount;
+
+    const offsetZ =
+      wave2 *
+      0.55 *
+      scatterAmount;
+
+    object.position.set(
+      offsetX,
+      offsetY,
+      offsetZ
+    );
+
+    object.rotation.x =
+      wave2 * 0.65 * scatterAmount;
+
+    object.rotation.y =
+      wave1 * 0.85 * scatterAmount;
+
+    object.rotation.z =
+      wave2 * 0.55 * scatterAmount;
+  });
+}
 
   const emblem = new THREE.Group();
   world.add(emblem);

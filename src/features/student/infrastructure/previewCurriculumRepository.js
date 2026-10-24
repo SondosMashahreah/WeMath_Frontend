@@ -1,7 +1,10 @@
-// UI fixtures only, not the Palestinian curriculum. Replace this adapter
-// with real grade/semester data when the content is supplied.
-// Port: listUnits(grade, semester), listLessons(grade, semester, unitId).
+import { SEMESTERS } from "../domain/journey.js";
+
+// Test/demo fixture implementing the same port as the real API repository.
 export const previewCurriculumRepository = {
+  listBooks() {
+    return SEMESTERS.map(item => ({ ...item }));
+  },
   listUnits(grade, semester) {
     return Array.from({ length: 6 }, (_, i) => ({
       id: `g${grade}-s${semester}-u${i + 1}`, number: i + 1, label: `الوحدة ${i + 1}`,

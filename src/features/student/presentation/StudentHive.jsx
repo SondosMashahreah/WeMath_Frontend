@@ -1,11 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 
+function fitTextClass(value = "") {
+  const length = String(value).trim().length;
+  if (length >= 34) return "student-text-xxl";
+  if (length >= 25) return "student-text-xl";
+  if (length >= 17) return "student-text-lg";
+  if (length >= 11) return "student-text-md";
+  return "student-text-sm";
+}
+
 function CellContent({ item, back = false }) {
+  const labelText = item.lines?.join(" ") || item.label || "";
   return <span className={`student-cell-content student-cell-${item.kind}`}>
     {item.kind === "grade" ? <>
       {back && <span className="student-cell-caption">الصف</span>}
       <span className="student-cell-number" dir="ltr">{item.number}</span>
-    </> : item.lines.map((line, i) => <span key={i} className={/^\d+$/.test(line) ? "student-cell-number" : "student-cell-caption"}>{line}</span>)}
+    </> : item.lines.map((line, i) => <span
+      key={i}
+      className={/^\d+$/.test(line)
+        ? "student-cell-number"
+        : `student-cell-caption ${fitTextClass(labelText)}`}
+    >{line}</span>)}
   </span>;
 }
 
@@ -35,7 +50,11 @@ export default function StudentHive({ view, selectedLesson, onSelect, onBack }) 
       <button type="button" className="bee-hit student-center" ref={node => { hitTargets.current.center = node; }}
         data-hover-id="center" aria-label={`${view.title} — رجوع`} onClick={onBack}
         onPointerEnter={hover} onPointerLeave={leave} onFocus={hover} onBlur={leave}>
-        <span key={view.key} className="student-center-content" aria-hidden="true">
+        <span
+          key={view.key}
+          className={`student-center-content ${fitTextClass(view.centerLines.join(" "))}`}
+          aria-hidden="true"
+        >
           {view.centerLines.map((line, i) => <span key={i} dir={/^\d+$/.test(line) ? "ltr" : "rtl"}>{line}</span>)}
         </span>
       </button>

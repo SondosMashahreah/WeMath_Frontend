@@ -1,5 +1,5 @@
-// Framework-free navigation rules. A lower selection cannot survive a change
-// to its parent. Grade 12 is a grade, with no branches/tracks at this stage.
+// Framework-free navigation rules. "semester" is kept as the persisted field
+// name for UI compatibility, but it stores the selected curriculum book id.
 export const initialJourney = Object.freeze({ grade: null, semester: null, unit: null, lesson: null });
 export const GRADES = Object.freeze(Array.from({ length: 12 }, (_, i) => i + 1));
 export const SEMESTERS = Object.freeze([
@@ -12,7 +12,7 @@ export function journeyReducer(state, action) {
     case "grade":
       return GRADES.includes(action.value) ? { ...initialJourney, grade: action.value } : state;
     case "semester":
-      return state.grade && SEMESTERS.some(s => s.id === action.value)
+      return state.grade && action.value !== null && action.value !== undefined && action.value !== ""
         ? { ...state, semester: action.value, unit: null, lesson: null } : state;
     case "unit":
       return state.semester && action.value ? { ...state, unit: action.value, lesson: null } : state;
@@ -30,7 +30,11 @@ export function journeyReducer(state, action) {
 
 export function selectJourneyItem(state, itemId, curriculum) {
   if (!state.grade) return journeyReducer(state, { type: "grade", value: Number(itemId) });
-  if (!state.semester) return journeyReducer(state, { type: "semester", value: Number(itemId) });
+  if (!state.semester) {
+    const choices = curriculum.listBooks ? curriculum.listBooks(state.grade) : SEMESTERS;
+    const choice = choices.find(item => String(item.id) === String(itemId));
+    return choice ? journeyReducer(state, { type: "semester", value: choice.id }) : state;
+  }
   if (!state.unit) {
     const unit = curriculum.listUnits(state.grade, state.semester).find(item => item.id === itemId);
     return unit ? journeyReducer(state, { type: "unit", value: unit.id }) : state;

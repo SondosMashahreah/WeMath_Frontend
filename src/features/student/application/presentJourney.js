@@ -8,21 +8,36 @@ export function presentJourney(state, curriculum) {
     items: GRADES.map(number => ({ id: String(number), label: `الصف ${number}`, number, kind: "grade", lines: [String(number)] })),
   };
   breadcrumbs.push({ label: `الصف ${state.grade}`, action: { type: "grade", value: state.grade } });
+  const books = curriculum.listBooks ? curriculum.listBooks(state.grade) : SEMESTERS;
   if (!state.semester) return {
-    key: `grade-${state.grade}`, title: `الصف ${state.grade}`, centerLines: ["الصف", String(state.grade)], hint: "اختر الفصل الدراسي", breadcrumbs,
-    items: SEMESTERS.map(semester => ({ ...semester, id: String(semester.id), kind: "semester" })),
+    key: `grade-${state.grade}`, title: `الصف ${state.grade}`, centerLines: ["الصف", String(state.grade)], hint: "اختر الفصل أو المسار", breadcrumbs,
+    items: books.map(book => ({ ...book, id: String(book.id), kind: "semester", lines: book.lines || [book.label] })),
   };
-  const semester = SEMESTERS.find(item => item.id === state.semester);
+  const semester = books.find(item => String(item.id) === String(state.semester));
+  if (!semester) return {
+    key: `grade-${state.grade}`, title: `الصف ${state.grade}`, centerLines: ["الصف", String(state.grade)], hint: "اختر الفصل أو المسار", breadcrumbs,
+    items: books.map(book => ({ ...book, id: String(book.id), kind: "semester", lines: book.lines || [book.label] })),
+  };
   breadcrumbs.push({ label: semester.label, action: { type: "semester", value: semester.id } });
   const units = curriculum.listUnits(state.grade, state.semester);
   if (!state.unit) return {
-    key: `grade-${state.grade}-semester-${state.semester}`, title: semester.label, centerLines: semester.lines, hint: "اختر الوحدة", breadcrumbs,
+    key: `grade-${state.grade}-book-${state.semester}`, title: semester.label, centerLines: semester.lines || [semester.label], hint: "اختر الوحدة", breadcrumbs,
     items: units.map(unit => ({ ...unit, kind: "unit", lines: ["الوحدة", String(unit.number)] })),
   };
   const unit = units.find(item => item.id === state.unit);
+  if (!unit) return {
+    key: `grade-${state.grade}-book-${state.semester}`, title: semester.label, centerLines: semester.lines || [semester.label], hint: "اختر الوحدة", breadcrumbs,
+    items: units.map(item => ({ ...item, kind: "unit", lines: ["الوحدة", String(item.number)] })),
+  };
   breadcrumbs.push({ label: unit.label, action: { type: "unit", value: unit.id } });
+  const lessons = curriculum.listLessons(state.grade, state.semester, unit.id);
+  const selectedLesson = lessons.find(item => item.id === state.lesson);
   return {
-    key: unit.id, title: unit.label, centerLines: ["الوحدة", String(unit.number)], hint: "اختر الدرس", breadcrumbs,
-    items: curriculum.listLessons(state.grade, state.semester, unit.id).map(lesson => ({ ...lesson, kind: "lesson", lines: ["الدرس", String(lesson.number)] })),
+    key: selectedLesson ? `${unit.id}-${selectedLesson.id}` : unit.id,
+    title: selectedLesson ? selectedLesson.label : unit.label,
+    centerLines: selectedLesson ? [selectedLesson.label] : ["الوحدة", String(unit.number)],
+    hint: selectedLesson ? `تم اختيار ${selectedLesson.label}` : "اختر الدرس",
+    breadcrumbs,
+    items: lessons.map(lesson => ({ ...lesson, kind: "lesson", lines: [lesson.label] })),
   };
 }

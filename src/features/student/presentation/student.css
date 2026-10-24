@@ -8,12 +8,21 @@
 .student-icon-button:hover { background: #fff8ed60; }
 .student-icon-button svg { width: 16px; height: 16px; }
 .student-hive-stage { height: 100%; }
-.student-center-content { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; color: var(--student-cream); font-size: calc(var(--cell-size) * .15); line-height: 1.45; font-weight: 850; text-shadow: 1px 3px 0 #503e2b15; animation: student-label-enter .32s ease-out; }
+.student-center-content { position: absolute; inset: 12% 16%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; color: var(--student-cream); font-size: calc(var(--cell-size) * .15); line-height: 1.35; font-weight: 850; text-align: center; text-wrap: balance; overflow-wrap: anywhere; text-shadow: 1px 3px 0 #503e2b15; animation: student-label-enter .32s ease-out; }
+.student-center-content > span { max-width: 100%; }
 .student-center-content > [dir="ltr"] { font-family: "Manrope Variable", sans-serif; font-size: 1.25em; line-height: 1.25; }
-.student-cell-content { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; line-height: 1.55; max-width: 72%; }
-.student-cell-caption { font-size: clamp(13px, calc(var(--cell-size) * .14), 34px); font-weight: 750; white-space: nowrap; }
+.student-cell-content { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0; line-height: 1.25; width: 76%; max-width: 76%; height: 72%; text-align: center; overflow: hidden; }
+.student-cell-caption { display: block; width: 100%; max-width: 100%; font-size: clamp(12px, calc(var(--cell-size) * .14), 34px); font-weight: 750; white-space: normal; text-align: center; text-wrap: balance; overflow-wrap: anywhere; }
 .student-cell-number { font-family: "Manrope Variable", sans-serif; font-weight: 800; font-size: clamp(24px, calc(var(--cell-size) * .26), 70px); line-height: 1.2; }
 .student-cell-grade .student-cell-number { font-size: clamp(30px, calc(var(--cell-size) * .31), 82px); }
+.student-cell-caption.student-text-md { font-size: clamp(11px, calc(var(--cell-size) * .125), 28px); }
+.student-cell-caption.student-text-lg { font-size: clamp(10px, calc(var(--cell-size) * .105), 24px); line-height: 1.22; }
+.student-cell-caption.student-text-xl { font-size: clamp(9px, calc(var(--cell-size) * .09), 20px); line-height: 1.18; }
+.student-cell-caption.student-text-xxl { font-size: clamp(8px, calc(var(--cell-size) * .078), 17px); line-height: 1.14; }
+.student-center-content.student-text-md { font-size: calc(var(--cell-size) * .135); }
+.student-center-content.student-text-lg { font-size: calc(var(--cell-size) * .115); }
+.student-center-content.student-text-xl { font-size: calc(var(--cell-size) * .097); line-height: 1.24; }
+.student-center-content.student-text-xxl { font-size: calc(var(--cell-size) * .082); line-height: 1.18; }
 .student-cell.is-selected { background: #503e2b12; }
 .student-cell.is-selected::after { content: ""; position: absolute; inset: 5%; border: 0; background: var(--ink); clip-path: polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%,25% 0%,26% 2%,2% 50%,26% 98%,74% 98%,98% 50%,74% 2%,26% 2%); }
 
@@ -54,7 +63,11 @@
 .student-switch-access button { border: 0; padding: 3px; background: transparent; font-size: inherit; font-weight: 800; text-decoration: underline; text-underline-offset: 4px; }
 @keyframes student-label-enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
 @media (max-width: 799px) {
-  .student-cell-caption { font-size: clamp(14px, calc(var(--cell-size) * .14), 22px); }
+  .student-cell-content { width: 78%; max-width: 78%; height: 74%; }
+  .student-cell-caption { font-size: clamp(12px, calc(var(--cell-size) * .135), 21px); }
+  .student-cell-caption.student-text-lg { font-size: clamp(9px, calc(var(--cell-size) * .10), 17px); }
+  .student-cell-caption.student-text-xl { font-size: clamp(8px, calc(var(--cell-size) * .087), 15px); }
+  .student-cell-caption.student-text-xxl { font-size: clamp(7px, calc(var(--cell-size) * .075), 13px); }
   .student-access-shell { padding: 60px 12% 64px; min-height: 525px; }
   .student-access-shell::before { clip-path: polygon(14% 0,86% 0,100% 50%,86% 100%,14% 100%,0 50%); }
   .student-access-shell::after { display: none; }

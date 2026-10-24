@@ -1,5 +1,5 @@
-import BeeExperience from "./components/BeeExperience.jsx";
+import StudentExperience from "./features/student/StudentExperience.jsx";
 
 export default function App() {
-  return <BeeExperience />;
+  return <StudentExperience />;
 }

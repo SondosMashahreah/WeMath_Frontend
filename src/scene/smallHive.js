@@ -4,7 +4,7 @@ import { HIVE_GRADIENT } from "../lib/hiveColors.js";
 
 // Desktop small hexagons only. This module owns its meshes and palette;
 // it never edits the intro, letters, proof pieces, center emblem or lighting.
-export function createSmallHive({ world, mesh, prism, tube, material, gold }) {
+export function createSmallHive({ world, mesh, prism, tube, material, gold, items = HIVE_ITEMS, design = DESKTOP_HIVE }) {
   let layout = { desktopMenu: false };
   // One continuous color ramp is shared by all cells. Texture coordinates,
   // rather than a single color per material, blend colors across each surface.
@@ -61,7 +61,7 @@ export function createSmallHive({ world, mesh, prism, tube, material, gold }) {
 
   const cells = new THREE.Group();
   world.add(cells);
-  const buttons = HIVE_ITEMS.map(item => {
+  const buttons = items.map(item => {
     const group = new THREE.Group();
     group.name = `cell-${item.id}`;
     cells.add(group);
@@ -100,7 +100,7 @@ export function createSmallHive({ world, mesh, prism, tube, material, gold }) {
     const angle = HIVE_GRADIENT.angle * Math.PI / 180;
     const directionX = Math.cos(angle), directionY = Math.sin(angle);
     const records = buttons.map(({ item, surface }) => {
-      const cell = DESKTOP_HIVE.cells[item.id], positions = surface.geometry.getAttribute("position");
+      const cell = design.cells[item.id], positions = surface.geometry.getAttribute("position");
       const normals = surface.geometry.getAttribute("normal");
       const coordinates = Array.from({ length: positions.count }, (_, i) => {
         // The back becomes front after a Y-axis half-turn. Mirror its UVs now
@@ -167,7 +167,11 @@ export function createSmallHive({ world, mesh, prism, tube, material, gold }) {
 
   return {
     buttons,
-    applyLayout(next) { layout = next; syncHiveGradient(); },
+    applyLayout(next) {
+      layout = next;
+      if (next.design && next.design !== design) { design = next.design; mapHiveGradient(); }
+      syncHiveGradient();
+    },
     syncContrast: syncCellContrast,
     dispose() { hiveGradientTexture.dispose(); },
   };

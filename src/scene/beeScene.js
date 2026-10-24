@@ -3,72 +3,30 @@ import gsap from "gsap";
 import { FontLoader } from "three/addons/loaders/FontLoader.js";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
-import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
 import fontData from "three/examples/fonts/helvetiker_bold.typeface.json";
 import { proofPoints } from "../lib/geometry.js";
 import { BEE_THEME, INTRO_DURATION, STORY_DURATION, DISC_RADIUS, SECTOR_COUNT, SECTOR_COLORS, DESKTOP_FLIP_DURATION, between, lerp, medallionOutline, introProofProgress, stageAt, cameraBounds, hiveLayout, ENTRANCE_DELAY } from "../lib/beeConfig.js";
 
 import { createSmallHive } from "./smallHive.js";
+import { createHiveRenderer, createHivePrimitives } from "./hive/rendering.js";
+import { createHiveProjection } from "./hive/projection.js";
 
 const font = new FontLoader().parse(fontData);
 
 /** The automatic 3D introduction and ten display-only honeycomb cells. */
 export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, onMenu, reduced = false }) {
   let disposed = false, raf = 0, width = 1, height = 1, lastTime = 0;
-  let opened = false, finished = false, hovered = null;
+  let opened = false, finished = false, hovered = null, active = true;
   const pointerMedia = window.matchMedia("(hover: hover) and (pointer: fine)");
   let lastStage = "", layout = hiveLayout(1366, 900);
   const clock = { seconds: 0 }, expansion = { value: 0 };
   const pointer = new THREE.Vector2(), viewPointer = new THREE.Vector2();
-  const disposables = new Set(), materials = new Set();
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 1.8));
-  renderer.setClearColor(BEE_THEME.background);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.2;
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-6, 6, 4, -4, 0.1, 80);
-  camera.position.set(0, 0, 24);
-  const environment = new RoomEnvironment();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const environmentTarget = pmrem.fromScene(environment, 0.04);
-  scene.environment = environmentTarget.texture;
-  scene.environmentIntensity = 0.45;
-  environment.dispose();
-  pmrem.dispose();
-
-  scene.add(new THREE.HemisphereLight(0xfff8e8, 0x8c705b, 2.3));
-  const light = new THREE.DirectionalLight(0xfff6e5, 3.4);
-  light.position.set(-5, 7, 10);
-  light.castShadow = true;
-  light.shadow.mapSize.set(1024, 1024);
-  Object.assign(light.shadow.camera, { left: -10, right: 10, top: 8, bottom: -8 });
-  light.shadow.normalBias = 0.035;
-  light.shadow.bias = -0.0001;
-  scene.add(light);
-  const fill = new THREE.DirectionalLight(0xffffff, 1.4);
-  fill.position.set(6, 0, 8);
-  scene.add(fill);
-  const geometry = (g) => { disposables.add(g); return g; };
-  const material = (color, extra = {}) => {
-    const m = new THREE.MeshStandardMaterial({ color, roughness: 0.32, metalness: 0.17, ...extra });
-    materials.add(m);
-    return m;
-  };
+  const rendering = createHiveRenderer(canvas);
+  const { renderer, scene, camera } = rendering;
+  const resources = createHivePrimitives();
+  const { mesh, material, tube, prism, updatePrism, materials } = resources;
   const honey = material(BEE_THEME.honey), cream = material(BEE_THEME.cream);
-
   const gold = material(BEE_THEME.honeyLight, { metalness: 0.55, roughness: 0.24 });
-  const mesh = (g, m, parent, xyz = [0, 0, 0]) => {
-    const object = new THREE.Mesh(geometry(g), m);
-    object.position.set(...xyz);
-    object.castShadow = true;
-    object.receiveShadow = true;
-    parent?.add(object);
-    return object;
-  };
   function text(value, size, parent, m = cream, depth = 0.025) {
     const g = new TextGeometry(value, { font, size, depth, curveSegments: 5, bevelEnabled: true, bevelThickness: Math.min(0.008, size * 0.025), bevelSize: Math.min(0.006, size * 0.02), bevelSegments: 2 });
     g.computeBoundingBox();
@@ -76,42 +34,6 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
     g.translate(-(box.max.x + box.min.x) / 2, -(box.max.y + box.min.y) / 2, 0);
     return mesh(g, m, parent);
   }
-  function tube(points, radius, m, parent, closed = false) {
-    const path = new THREE.CatmullRomCurve3(points.map(p => new THREE.Vector3(...p)), closed, "centripetal");
-    return mesh(new THREE.TubeGeometry(path, Math.max(12, points.length * 4), radius, 6, closed), m, parent);
-  }
-  // Closed convex prism, including front, back, side wall and bevels.
-  // Its vertex layout is constant, so a circle can really deform into a hexagon.
-  function prism(outline, depth = 0.32, bevel = 0.025) {
-    const g = geometry(new THREE.BufferGeometry());
-    const positions = new Float32Array(outline.length * 8 * 9);
-    g.setAttribute("position", new THREE.BufferAttribute(positions, 3).setUsage(THREE.DynamicDrawUsage));
-    updatePrism(g, outline, depth, bevel);
-    return g;
-  }
-  function updatePrism(g, outline, depth = 0.32, bevel = 0.025) {
-    const p = g.attributes.position.array;
-    let cursor = 0;
-    const cx = outline.reduce((s, v) => s + v.x, 0) / outline.length;
-    const cy = outline.reduce((s, v) => s + v.y, 0) / outline.length;
-    const inset = (v, z) => [lerp(v.x, cx, bevel / 2), lerp(v.y, cy, bevel / 2), z];
-    const tri = (a, b, c) => { for (const v of [a, b, c]) for (const n of v) p[cursor++] = n; };
-    const z = depth / 2, top = z + bevel;
-    for (let i = 0; i < outline.length; i++) {
-      const a = outline[i], b = outline[(i + 1) % outline.length];
-      const at = [a.x, a.y, z], bt = [b.x, b.y, z], ab = [a.x, a.y, -z], bb = [b.x, b.y, -z];
-      const ai = inset(a, top), bi = inset(b, top), ail = inset(a, -top), bil = inset(b, -top);
-      tri([cx, cy, top], ai, bi);
-      tri([cx, cy, -top], bil, ail);
-      tri(at, ab, bb); tri(at, bb, bt);
-      tri(at, bt, bi); tri(at, bi, ai);
-      tri(ab, ail, bil); tri(ab, bil, bb);
-    }
-    g.attributes.position.needsUpdate = true;
-    g.computeVertexNormals();
-    g.computeBoundingSphere();
-  }
-
   const world = new THREE.Group();
   scene.add(world);
   const shadow = new THREE.ShadowMaterial({ color: 0x715238, opacity: 0 });
@@ -332,53 +254,7 @@ function renderProof(t) {
   const smallHive = createSmallHive({ world, mesh, prism, tube, material, gold });
   const { buttons } = smallHive;
 
-  // HTML keeps Arabic shaping and React Icons editable. Project it onto the
-  // actual face plane, including its rotation and scale, rather than guessing.
-  const projection = new THREE.Vector3();
-  function projectPoint(object, x, y, z) {
-    projection.set(x, y, z).applyMatrix4(object.matrixWorld).project(camera);
-    return { x: (projection.x * 0.5 + 0.5) * width, y: (0.5 - projection.y * 0.5) * height };
-  }
-  function placeHit(id, object, radius, depth, progress = 1) {
-    const button = hitTargets.current[id];
-    if (!button) return;
-    const halfHeight = radius * Math.sqrt(3) / 2;
-    const a = projectPoint(object, -radius, halfHeight, depth);
-    const b = projectPoint(object, radius, halfHeight, depth);
-    const c = projectPoint(object, -radius, -halfHeight, depth);
-    const size = Math.max(0.1, Math.hypot(b.x - a.x, b.y - a.y));
-    const h = size * Math.sqrt(3) / 2;
-    button.style.width = `${size}px`;
-    button.style.height = `${h}px`;
-    button.style.setProperty("--cell-size", `${size}px`);
-    button.style.transform = `matrix(${(b.x-a.x)/size},${(b.y-a.y)/size},${(c.x-a.x)/h},${(c.y-a.y)/h},${a.x},${a.y})`;
-    button.style.opacity = between(progress, 0.5, 1);
-    button.inert = progress < 0.85;
-    return { element: button, size, height: h, matrix: [(b.x-a.x)/size, (b.y-a.y)/size, (c.x-a.x)/h, (c.y-a.y)/h, a.x, a.y] };
-  }
-
-  // Project each face independently, then express it inside the stable button.
-  // This keeps Arabic and React Icons editable and legible on the actual 3D
-  // front/back surfaces; the back text is never shown mirrored through the tile.
-  const faceNormal = new THREE.Vector3();
-  function placeFace(element, object, hit) {
-    if (!element) return;
-    const a = projectPoint(object, -1, Math.sqrt(3) / 2, 0);
-    const b = projectPoint(object, 1, Math.sqrt(3) / 2, 0);
-    const c = projectPoint(object, -1, -Math.sqrt(3) / 2, 0);
-    const matrix = [(b.x-a.x)/hit.size, (b.y-a.y)/hit.size, (c.x-a.x)/hit.height, (c.y-a.y)/hit.height, a.x, a.y];
-    const [aa, ab, ac, ad, ax, ay] = hit.matrix;
-    const determinant = aa * ad - ab * ac;
-    if (Math.abs(determinant) < 0.00001) { element.style.visibility = "hidden"; return; }
-    const [ba, bb, bc, bd, bx, by] = matrix;
-    const relative = [
-      (ad*ba-ac*bb)/determinant, (aa*bb-ab*ba)/determinant,
-      (ad*bc-ac*bd)/determinant, (aa*bd-ab*bc)/determinant,
-      (ad*(bx-ax)-ac*(by-ay))/determinant, (aa*(by-ay)-ab*(bx-ax))/determinant,
-    ];
-    element.style.transform = `matrix(${relative.join(",")})`;
-    element.style.visibility = object.getWorldDirection(faceNormal).z > 0.045 ? "visible" : "hidden";
-  }
+  const { placeHit, placeFace } = createHiveProjection({ camera, hitTargets, getSize: () => ({ width, height }) });
 
   function updateFlip(button) {
     const target = layout.desktopMenu && opened && hovered === button.item.id ? 1 : 0;
@@ -416,7 +292,9 @@ function renderProof(t) {
     shadow.opacity = 0.14 * between(t, 2.8, 6);
   }
   function resize() {
-    const rect = host.getBoundingClientRect(); width = rect.width; height = rect.height;
+    const rect = host.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    width = rect.width; height = rect.height;
     renderer.setSize(width, height, false);
     const bounds = cameraBounds(width, height);
     camera.left = -bounds.width / 2; camera.right = bounds.width / 2;
@@ -436,7 +314,7 @@ function renderProof(t) {
   host.addEventListener("pointerleave", pointerLeave);
 
   function frame(now) {
-    if (disposed) return;
+    if (disposed || !active) return;
     const dt = Math.min((now - (lastTime || now)) / 1000, 0.05); lastTime = now;
     drawIntro();
     const spread = layout.desktopMenu ? between(expansion.value, 0, 0.74) : 0;
@@ -498,7 +376,7 @@ function renderProof(t) {
       }
     }
     renderer.render(scene, camera);
-    if (!document.hidden) raf = requestAnimationFrame(frame);
+    if (!document.hidden && active) raf = requestAnimationFrame(frame);
   }
   const timeline = gsap.timeline({ paused: true, onComplete() { finished = true; onFinish(); } });
   timeline.to(clock, { seconds: STORY_DURATION, duration: INTRO_DURATION, ease: "none" });
@@ -521,7 +399,7 @@ function renderProof(t) {
   }
   const visibility = () => {
     cancelAnimationFrame(raf);
-    if (document.hidden) timeline.pause();
+    if (document.hidden || !active) timeline.pause();
     else {
       if (!finished) timeline.resume();
       lastTime = 0; raf = requestAnimationFrame(frame);
@@ -531,6 +409,16 @@ function renderProof(t) {
   start(); raf = requestAnimationFrame(frame);
   return {
     skip, toggleMenu,
+    setActive(value) {
+      active = value;
+      cancelAnimationFrame(raf);
+      if (!active) timeline.pause();
+      else if (!document.hidden) {
+        resize();
+        if (!finished) timeline.resume();
+        lastTime = 0; raf = requestAnimationFrame(frame);
+      }
+    },
     hover(id) { hovered = id; },
     setReduced(value) {
       reduced = value;
@@ -542,9 +430,9 @@ function renderProof(t) {
       pointerMedia.removeEventListener("change", resize);
       for (const button of buttons) gsap.killTweensOf(button.flip);
       host.removeEventListener("pointermove", pointerMove); host.removeEventListener("pointerleave", pointerLeave);
-      for (const g of disposables) g.dispose(); for (const m of materials) m.dispose();
+      resources.dispose();
       smallHive.dispose();
-      light.shadow.dispose(); environmentTarget.dispose(); renderer.dispose();
+      rendering.dispose();
     },
   };
 }

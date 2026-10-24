@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BEE_THEME, HIVE_ITEMS } from "../lib/beeConfig.js";
 import HiveIcon from "./HiveIcon.jsx";
 
-export default function BeeExperience() {
+export default function BeeExperience({ active = true, modalOpen = false, onStudentRequest }) {
   const host = useRef(null), canvas = useRef(null), engine = useRef(null);
   const hitTargets = useRef({}), centerButton = useRef(null);
   const [rendererState, setRendererState] = useState("loading");
@@ -32,6 +32,12 @@ export default function BeeExperience() {
   }, []);
 
   useEffect(() => {
+    if (rendererState !== "ready") return;
+    engine.current?.setActive(active);
+    if (active && finished) host.current?.querySelector('[data-cell="students"]')?.focus({ preventScroll: true });
+  }, [active, rendererState, finished]);
+
+  useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const change = () => engine.current?.setReduced(media.matches);
     media.addEventListener("change", change);
@@ -40,19 +46,20 @@ export default function BeeExperience() {
 
   useEffect(() => {
     const onKey = event => {
+      if (!active || modalOpen) return;
       if (event.key !== "Escape") return;
       if (!finished) engine.current?.skip();
       else if (menuOpen) { engine.current?.toggleMenu(); centerButton.current?.focus(); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [finished, menuOpen]);
+  }, [finished, menuOpen, active, modalOpen]);
 
   const hover = event => engine.current?.hover(event.currentTarget.dataset.hoverId);
   const clearHover = () => engine.current?.hover(null);
 
   return (
-    <main ref={host} className="bee-experience" data-stage={stage} data-renderer={rendererState}
+    <main ref={host} className="bee-experience" hidden={!active} data-stage={stage} data-renderer={rendererState}
       data-menu={menuOpen ? "open" : "closed"} aria-label="WE MATH"
       style={{ "--background": BEE_THEME.background, "--ink": BEE_THEME.ink, "--icon": BEE_THEME.icon }}>
       <canvas ref={canvas} className="bee-canvas" aria-hidden="true" />
@@ -77,8 +84,9 @@ export default function BeeExperience() {
             className={`bee-hit bee-cell${item.lines.length > 1 ? " bee-cell-multiline" : ""}`}
             data-cell={item.id} data-hover-id={item.id} aria-label={item.label}
             onPointerEnter={hover} onPointerLeave={clearHover} onFocus={hover} onBlur={clearHover}
+            onClick={item.id === "students" ? onStudentRequest : undefined}
           >
-            {/* Display-only buttons: intentionally no links, routes or click actions. */}
+            {/* Student entry is connected; the remaining home sections keep their current behavior. */}
             <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
               <HiveIcon name={item.id} />
               <span className="bee-cell-label">{item.lines.map((line, i) => <span key={i}>{line}</span>)}</span>

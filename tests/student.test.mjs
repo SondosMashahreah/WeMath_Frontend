@@ -25,7 +25,8 @@ test("every grade 1–12 leads to exactly two semesters, then units and lessons"
         assert.equal(lessons.title, unit.label);
         const selected = selectJourneyItem(unitState, lessons.items[0].id, curriculum);
         assert.equal(selected.lesson, lessons.items[0].id);
-        assert.equal(presentJourney(selected, curriculum).key, lessons.key, "lesson selection has no extra page");
+        assert.equal(presentJourney(selected, curriculum).title, lessons.items[0].label);
+        assert(presentJourney(selected, curriculum).items.some(item => item.id === "@learn"));
       }
     }
   }
@@ -41,7 +42,8 @@ test("back, breadcrumbs and parent changes clear all stale descendants", () => {
   assert.equal(crumbs.length, 4);
   assert.deepEqual(journeyReducer(state, crumbs[0].action), initialJourney);
   assert.deepEqual(journeyReducer(state, crumbs[1].action), { ...initialJourney, grade: 12 });
-  assert.deepEqual(journeyReducer(state, { type: "back" }), { ...initialJourney, grade: 12, semester: 2 });
+  assert.deepEqual(journeyReducer(state, { type: "back" }), { ...state, lesson: null });
+  assert.deepEqual(journeyReducer(journeyReducer(state, { type: "back" }), { type: "back" }), { ...initialJourney, grade: 12, semester: 2 });
   assert.deepEqual(journeyReducer(state, { type: "grade", value: 1 }), { ...initialJourney, grade: 1 });
   assert.equal(selectJourneyItem(state, "missing", curriculum), state);
   assert.equal(selectJourneyItem(initialJourney, "13", curriculum), initialJourney);
@@ -49,16 +51,19 @@ test("back, breadcrumbs and parent changes clear all stale descendants", () => {
   assert.equal(selectJourneyItem(anotherSemester, units[0].id, curriculum), anotherSemester, "a unit from a different semester is rejected");
 });
 
-test("access requires precisely the requested fields and supports Arabic numerals", () => {
-  assert.deepEqual(REGISTRATION_FIELDS.map(field => field.name), ["studentName", "identityNumber", "school", "phone", "email", "directorate"]);
+test("registration requires username, password and grade; Arabic numerals work", () => {
+  assert(REGISTRATION_FIELDS.some(field => field.name === "grade"));
   assert.deepEqual(Object.keys(validateAccess("login", {})), ["username", "password"]);
-  assert.deepEqual(validateAccess("login", { username: "student", password: "preview" }), {});
-  const data = { studentName: "طالب تجريبي", identityNumber: "١٢٣٤٥٦٧٨٩", school: "مدرسة تجريبية", phone: "٠٥٩ ١٢٣ ٤٥٦٧", email: "student@example.com", directorate: "مديرية تجريبية" };
+  const data = { full_name: "طالب تجريبي", username: "student", password: "test123456", grade: "6", identity_number: "١٢٣٤٥٦٧٨٩", phone: "٠٥٩ ١٢٣ ٤٥٦٧", email: "student@example.com" };
   assert.deepEqual(validateAccess("register", data), {});
-  for (const name of REGISTRATION_FIELDS.map(field => field.name)) assert(validateAccess("register", { ...data, [name]: "" })[name]);
+  for (const name of ["full_name", "username", "password", "grade"]) assert(validateAccess("register", { ...data, [name]: "" })[name]);
+  assert(validateAccess("register", { ...data, grade: 13 }).grade);
+  assert(validateAccess("register", { ...data, username: "student@example.com" }).username);
+  assert(validateAccess("register", { ...data, password: "short" }).password);
   assert(validateAccess("register", { ...data, email: "not-an-email" }).email);
   assert(validateAccess("register", { ...data, phone: "-------" }).phone);
-  assert(validateAccess("register", { ...data, identityNumber: "abcdefghi" }).identityNumber);
+  assert(validateAccess("register", { ...data, identity_number: "abcdefghi" }).identity_number);
+  assert.deepEqual(validateAccess("register", { full_name: "ولي الأمر", username: "parent", password: "test123456" }, "parent"), {});
 });
 
 function polygon(box) {

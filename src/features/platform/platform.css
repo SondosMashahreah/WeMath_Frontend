@@ -1,0 +1,45 @@
+.platform-composition, .platform-legacy { width: 100%; height: 100%; }
+.platform-legacy[hidden] { display: none; }
+.platform-extension-root { position: absolute; inset: 0; }
+.platform-portal { isolation: isolate; }
+.platform-dialog { --student-accent: #ad3b1b; }
+.platform-dialog .student-access-heading h2 { overflow-wrap: anywhere; }
+.platform-dialog .student-access-shell { min-height: 570px; }
+.platform-dialog p, .platform-dialog li { font-size: 13px; line-height: 1.95; overflow-wrap: anywhere; }
+.platform-dialog h3 { font-size: 15px; line-height: 1.8; }
+.platform-dialog a { color: #87371d; text-underline-offset: 4px; }
+.platform-dialog a.student-primary-button { color: #fff8ed; text-decoration: none; }
+.platform-form, .platform-actions { display: grid; gap: 15px; }
+.platform-form label { display: grid; gap: 7px; font-size: 12px; font-weight: 750; }
+.platform-form input, .platform-form select, .platform-form textarea { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit; font-size: 14px; color: #503e2b; background: #fffcf6; border: 1px solid #bca891; border-radius: 8px; }
+.platform-form textarea { resize: vertical; min-height: 80px; }
+.platform-form :is(input,select,textarea):focus { outline: 2px solid #9c4c2b; outline-offset: 2px; }
+.platform-dialog button:disabled { cursor: wait; opacity: .55; }
+.platform-form fieldset, .platform-practice fieldset { min-width: 0; border: 1px solid #bca891; border-radius: 8px; padding: 14px; display: grid; gap: 12px; }
+.platform-form legend, .platform-practice legend { padding: 0 6px; font-size: 13px; }
+.platform-form [role="alert"], .platform-actions [role="alert"] { color: #9a2e22; }
+.platform-prose { white-space: pre-wrap; }
+.platform-demo { border-inline-start: 3px solid #b06a32; padding-inline-start: 12px; color: #795039; }
+.platform-status { position: fixed; bottom: 10px; left: 15px; right: 15px; z-index: 1; pointer-events: none; text-align: center; font-size: 12px; color: #503e2b; margin: 0; }
+.platform-status button { pointer-events: auto; margin-inline-start: 10px; font: inherit; border: 0; padding: 5px 10px; border-radius: 4px; background: #fff8ed; color: inherit; }
+.platform-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.platform-hex-option { clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); border: 0; min-width: 72px; min-height: 66px; padding: 12px 22px; background: #ecd6b6; font: inherit; }
+.platform-hex-option[aria-pressed="true"] { background: #ad3b1b; color: #fff8ed; }
+.platform-conversation { display: grid; gap: 14px; margin-bottom: 20px; }
+.platform-conversation article { border-bottom: 1px solid #bca891; }
+.platform-conversation ol { text-align: left; }
+.platform-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.platform-printable { margin-bottom: 20px; }
+@media (max-width: 500px) { .platform-form :is(input,select,textarea) { font-size: 16px; } }
+@media print {
+  body:has(.platform-printable) { background: white; height: auto; overflow: visible; }
+  body:has(.platform-printable) * { visibility: hidden; }
+  body:has(.platform-printable) .platform-printable, body:has(.platform-printable) .platform-printable * { visibility: visible; }
+  body:has(.platform-printable) .platform-printable { position: static; color: black; background: white; margin: 0; padding: 0; }
+  body:has(.platform-printable) :is(#root,.platform-composition,.platform-extension-root,.platform-portal) { position: static; height: auto; overflow: visible; }
+  body:has(.platform-printable) .platform-dialog { position: static; display: block; width: 100%; max-width: none; max-height: none; height: auto; margin: 0; padding: 0; overflow: visible; }
+  body:has(.platform-printable) .student-access-shell { padding: 0; min-height: 0; filter: none; }
+  body:has(.platform-printable) :is(.platform-no-print,.student-hive-stage,.platform-status,.platform-legacy), body:has(.platform-printable) .student-access-shell::before, body:has(.platform-printable) .student-access-shell::after { display: none; }
+  body:has(.platform-printable) .platform-dialog::backdrop { display: none; }
+  .platform-print-question { break-inside: avoid; margin-block: 18px; }
+}

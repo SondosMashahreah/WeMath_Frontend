@@ -1,4 +1,3 @@
-import { BEE_THEME } from "./beeConfig.js";
 export const HIVE_GRADIENT = {
   enabled: true,
   colors: [

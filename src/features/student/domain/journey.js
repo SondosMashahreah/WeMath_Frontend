@@ -19,6 +19,7 @@ export function journeyReducer(state, action) {
     case "lesson":
       return state.unit && action.value ? { ...state, lesson: action.value } : state;
     case "back":
+      if (state.lesson) return { ...state, lesson: null };
       if (state.unit) return { ...state, unit: null, lesson: null };
       if (state.semester) return { ...state, semester: null, unit: null, lesson: null };
       if (state.grade) return { ...initialJourney };

@@ -59,14 +59,15 @@ export default function StudentHive({ view, selectedLesson, onSelect, onBack }) 
         </span>
       </button>
       <div className="bee-buttons" role="group" aria-label={view.hint}>
-        {view.items.map(item => <button key={item.id} type="button"
+        {view.items.map(item => { const Cell = item.href ? "a" : "button"; return <Cell key={item.id} type={item.href ? undefined : "button"}
+          href={item.href} target={item.href ? "_blank" : undefined} rel={item.href ? "noopener noreferrer" : undefined}
           ref={node => { if (node) hitTargets.current[item.id] = node; else delete hitTargets.current[item.id]; }}
           className={`bee-hit bee-cell student-cell${selectedLesson === item.id ? " is-selected" : ""}`} data-hover-id={item.id}
           aria-label={item.label} aria-pressed={item.kind === "lesson" ? selectedLesson === item.id : undefined}
           onClick={() => onSelect(item.id)} onPointerEnter={hover} onPointerLeave={leave} onFocus={hover} onBlur={leave}>
           <span className="bee-cell-face bee-cell-front" dir="rtl" aria-hidden="true"><CellContent item={item} /></span>
           <span className="bee-cell-face bee-cell-back" dir="rtl" aria-hidden="true"><CellContent item={item} back /></span>
-        </button>)}
+        </Cell>; })}
       </div>
     </>}
     {status === "error" && <div className="bee-error" role="alert"><p>تعذّر عرض الخلايا. جرّب متصفحًا يدعم WebGL 2.</p><button onClick={onBack}>رجوع</button></div>}

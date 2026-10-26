@@ -87,3 +87,34 @@
   .student-center-content { animation: none; }
   .student-primary-button, .student-secondary-button { transition: none; }
 }
+/* Shared surfaces retain the original hive palette and scale. */
+.account-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.account-fieldset:disabled { opacity: .65; }
+.optional-label, .field-hint { font-size: 10px; color: #745f4b; font-weight: 400; }
+.field-hint { display: block; margin-top: 4px; }
+.student-input-wrap select { font: inherit; font-size: 14px; color: #503e2b; border: 1px solid #bca891; background: #fffcf6; border-radius: 8px; min-height: 46px; padding: 9px 12px; width: 100%; }
+.student-input-wrap select:focus-visible { outline: 2px solid #9c4c2b; outline-offset: 2px; }
+.account-checkbox { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; font-size: 13px; }
+.form-failure { color: #9a2e22; font-size: 13px; line-height: 1.8; }
+.account-grade { text-align: center; margin-bottom: 30px; }
+.student-access-dialog p { line-height: 1.8; }
+.student-cell[href] { color: inherit; text-decoration: none; }
+.demo-badge { display: inline-block; font-size: 11px; border: 1px solid #aa8161; border-radius: 20px; padding: 4px 12px; }
+.lesson-resource { text-align: center; font-size: 14px; }
+.lesson-resource video { width: 100%; margin-top: 15px; border-radius: 8px; }
+.practice-choices { display: flex; gap: 12px; justify-content: center; }
+.practice-hex { width: 64px; height: 58px; border: 0; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); background: linear-gradient(120deg,#cb7035,#f4dfb9); color: #503e2b; font: 800 20px "Manrope Variable",sans-serif; }
+.practice-hex[aria-pressed="true"] { background: #ad3b1b; color: #fff8ed; }
+.polygon-explorer { display: grid; gap: 12px; }
+.polygon-explorer svg { width: min(180px,100%); margin: auto; fill: #e6ae70; stroke: #8b4829; stroke-width: 3; }
+.polygon-explorer input { width: 100%; accent-color: #ad3b1b; }
+.parent-preview-label { position: fixed; bottom: 8px; left: 50%; transform: translateX(-50%); max-width: 85vw; background: #fff8ede8; padding: 5px 14px; border-radius: 20px; font-size: 11px; text-align: center; }
+.progress-summary { display: flex; justify-content: center; gap: 18px; margin: 15px 0 25px; }
+.progress-summary > div { width: 110px; min-height: 99px; background: linear-gradient(140deg,#df9b5f,#f5e7ce); clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.progress-summary strong { font: 800 26px "Manrope Variable",sans-serif; }
+.progress-summary span { font-size: 11px; }
+.progress-empty { text-align: center; font-size: 13px; }
+.progress-lessons { padding: 0; list-style: none; }
+.progress-lessons li { padding: 14px 0; border-bottom: 1px solid #bca89170; display: grid; gap: 7px; font-size: 13px; }
+.progress-lessons span, .progress-lessons time { color: #745f4b; font-size: 11px; }
+@media (max-width: 500px) { .student-input-wrap select { font-size: 16px; } }

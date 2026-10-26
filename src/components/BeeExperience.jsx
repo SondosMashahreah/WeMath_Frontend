@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BEE_THEME, HIVE_ITEMS } from "../lib/beeConfig.js";
 import HiveIcon from "./HiveIcon.jsx";
 
-export default function BeeExperience({ active = true, modalOpen = false, onStudentRequest }) {
+export default function BeeExperience({ active = true, modalOpen = false, onStudentRequest, onParentRequest }) {
   const host = useRef(null), canvas = useRef(null), engine = useRef(null);
   const hitTargets = useRef({}), centerButton = useRef(null);
   const [rendererState, setRendererState] = useState("loading");
@@ -84,9 +84,8 @@ export default function BeeExperience({ active = true, modalOpen = false, onStud
             className={`bee-hit bee-cell${item.lines.length > 1 ? " bee-cell-multiline" : ""}`}
             data-cell={item.id} data-hover-id={item.id} aria-label={item.label}
             onPointerEnter={hover} onPointerLeave={clearHover} onFocus={hover} onBlur={clearHover}
-            onClick={item.id === "students" ? onStudentRequest : undefined}
+            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => window.open("https://steam.ps/", "_blank", "noopener,noreferrer") : undefined}
           >
-            {/* Student entry is connected; the remaining home sections keep their current behavior. */}
             <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
               <HiveIcon name={item.id} />
               <span className="bee-cell-label">{item.lines.map((line, i) => <span key={i}>{line}</span>)}</span>

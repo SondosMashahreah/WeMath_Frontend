@@ -22,7 +22,7 @@ export function presentJourney(state, curriculum) {
   const units = curriculum.listUnits(state.grade, state.semester);
   if (!state.unit) return {
     key: `grade-${state.grade}-book-${state.semester}`, title: semester.label, centerLines: semester.lines || [semester.label], hint: "اختر الوحدة", breadcrumbs,
-    items: units.map(unit => ({ ...unit, kind: "unit", lines: ["الوحدة", String(unit.number)] })),
+    items: [...units.map(unit => ({ ...unit, kind: "unit", lines: ["الوحدة", String(unit.number)] })), ...(semester.sourceUrl ? [{ id: "@book", label: "فتح الكتاب", lines: ["الكتاب"], kind: "resource", href: semester.sourceUrl }] : [])],
   };
   const unit = units.find(item => item.id === state.unit);
   if (!unit) return {
@@ -32,6 +32,13 @@ export function presentJourney(state, curriculum) {
   breadcrumbs.push({ label: unit.label, action: { type: "unit", value: unit.id } });
   const lessons = curriculum.listLessons(state.grade, state.semester, unit.id);
   const selectedLesson = lessons.find(item => item.id === state.lesson);
+  if (selectedLesson) return {
+    key: `lesson-${selectedLesson.id}`, title: selectedLesson.label, centerLines: [selectedLesson.label], hint: "اختر نشاط الدرس", breadcrumbs,
+    items: [
+      ...(semester.sourceUrl ? [{ id: "@book", label: "فتح الكتاب", lines: ["الكتاب"], kind: "resource", href: semester.sourceUrl }] : []),
+      ...[["learn", "تعلّم"], ["video", "شاهد"], ["practice", "تدرّب"], ["game", "استكشف"], ["completed", "أنهيت الدرس"]].map(([id, label]) => ({ id: `@${id}`, label, lines: [label], kind: "resource" })),
+    ],
+  };
   return {
     key: selectedLesson ? `${unit.id}-${selectedLesson.id}` : unit.id,
     title: selectedLesson ? selectedLesson.label : unit.label,

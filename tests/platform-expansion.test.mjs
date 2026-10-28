@@ -11,7 +11,7 @@ function storage(t) {
   return values;
 }
 
-test("only the seven unfinished home entries are intercepted", () => {
+test("the seven additional sections retain distinct home identifiers", () => {
   assert.equal(EXTENSION_IDS.size, 7);
   for (const id of ["students", "parents", "steam"]) assert.equal(EXTENSION_IDS.has(id), false);
 });

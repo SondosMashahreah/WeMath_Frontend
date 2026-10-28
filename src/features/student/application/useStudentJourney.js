@@ -1,12 +1,15 @@
-import { useCallback, useMemo, useState } from "react";
-import { initialJourney, journeyReducer, selectJourneyItem } from "../domain/journey.js";
+import { useMemo } from "react";
+import { useParams } from "react-router-dom";
+import { journeyReducer, selectJourneyItem } from "../domain/journey.js";
+import { validJourney } from "../domain/validateJourney.js";
 import { presentJourney } from "./presentJourney.js";
-
-export function useStudentJourney(curriculum, grade) {
-  const [state, setState] = useState(() => ({ ...initialJourney, grade }));
-  const { semester, unit, lesson } = state;
-  const view = useMemo(() => presentJourney({ grade, semester, unit, lesson }, curriculum), [grade, semester, unit, lesson, curriculum]);
-  const select = useCallback(id => setState(previous => selectJourneyItem(previous, id, curriculum)), [curriculum]);
-  const navigate = useCallback(action => setState(previous => ({ ...journeyReducer(previous, action), grade })), [grade]);
-  return { state, view, select, navigate };
+import { studentPath } from "../../../shared/routing/paths.js";
+import { usePageNavigation } from "../../../shared/routing/usePageNavigation.js";
+export function useStudentJourney(curriculum, grade, base = "/student") {
+  const { bookId, unitId, lessonId, activity } = useParams(), { go } = usePageNavigation();
+  const state = useMemo(() => ({ grade, semester: bookId || null, unit: unitId || null, lesson: lessonId || null }), [grade, bookId, unitId, lessonId]);
+  const view = useMemo(() => presentJourney(state, curriculum), [state, curriculum]);
+  const select = id => go(studentPath(selectJourneyItem(state, id, curriculum), base));
+  const navigate = action => go(studentPath({ ...journeyReducer(state, action), grade }, base));
+  return { state, view, select, navigate, activity, valid: validJourney(state, curriculum, activity) };
 }

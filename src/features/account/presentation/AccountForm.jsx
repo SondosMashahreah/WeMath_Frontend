@@ -1,19 +1,20 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { accessFields, accessPayload, validateAccess } from "../../student/domain/accessValidation.js";
 export default function AccountForm({ mode, role = "student", initialValues = {}, onSubmit, onComplete, submitLabel, compact = false }) {
   const [values, setValues] = useState(initialValues), [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false), [pending, setPending] = useState(false), [failure, setFailure] = useState("");
-  const form = useRef(null);
+  const form = useRef(null), mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const fields = accessFields(mode, role).filter(field => !compact || field.required);
   async function submit(event) {
     event.preventDefault(); if (pending) return;
     const next = validateAccess(mode, values, role); setErrors(next); setFailure("");
     if (Object.keys(next).length) { requestAnimationFrame(() => form.current?.querySelector('[aria-invalid="true"]')?.focus()); return; }
     setPending(true);
-    try { const result = await onSubmit(accessPayload(mode, values, role)); onComplete?.(result); }
-    catch (error) { setFailure(error.message); }
-    finally { setPending(false); }
+    try { const result = await onSubmit(accessPayload(mode, values, role)); if (mounted.current) onComplete?.(result); }
+    catch (error) { if (mounted.current && error.name !== "AbortError") setFailure(error.message); }
+    finally { if (mounted.current) setPending(false); }
   }
   const update = (name, value) => { setValues(previous => ({ ...previous, [name]: value })); setErrors(previous => ({ ...previous, [name]: undefined })); };
   return <form ref={form} onSubmit={submit} noValidate className={`student-access-form ${["register", "profile", "edit"].includes(mode) ? "is-register" : ""}`} aria-busy={pending}>

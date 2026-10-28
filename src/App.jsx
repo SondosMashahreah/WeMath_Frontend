@@ -1,6 +1,3 @@
-import StudentExperience from "./features/student/StudentExperience.jsx";
-import PlatformExtensions from "./features/platform/PlatformExtensions.jsx";
-
-export default function App() {
-  return <PlatformExtensions><StudentExperience /></PlatformExtensions>;
-}
+import { RouterProvider } from "react-router-dom";
+import AppProviders from "./app/providers/AppProviders.jsx";
+export default function App({ router }) { return <AppProviders><RouterProvider router={router} /></AppProviders>; }

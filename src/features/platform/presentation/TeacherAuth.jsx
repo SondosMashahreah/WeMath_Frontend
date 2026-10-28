@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { teacherAccess } from "../infrastructure/client.js";
 import PlatformDialog from "./PlatformDialog.jsx";
 
-export default function TeacherAuth({ onComplete, onClose }) {
-  const [mode, setMode] = useState("login"), [busy, setBusy] = useState(false), [error, setError] = useState("");
+export default function TeacherAuth({ mode = "login", onModeChange, onComplete, onClose }) {
+  const [busy, setBusy] = useState(false), [error, setError] = useState("");
   const controller = useRef(null);
-  useEffect(() => () => controller.current?.abort(), []);
+  useEffect(() => () => controller.current?.abort(), [mode]);
   async function submit(event) {
     event.preventDefault(); if (busy) return;
     const body = Object.fromEntries(new FormData(event.currentTarget));
@@ -22,7 +22,7 @@ export default function TeacherAuth({ onComplete, onClose }) {
       {mode === "register" && <label>المدرسة (اختياري)<input name="school" maxLength={150} /></label>}
       {error && <p role="alert">{error}</p>}
       <button className="student-primary-button" disabled={busy}>{busy ? "جاري المتابعة…" : mode === "login" ? "دخول" : "إنشاء حساب"}</button>
-      <button className="student-secondary-button" type="button" disabled={busy} onClick={() => { setMode(mode === "login" ? "register" : "login"); setError(""); }}>{mode === "login" ? "إنشاء حساب معلّم" : "لدي حساب — تسجيل الدخول"}</button>
+      <button className="student-secondary-button" type="button" disabled={busy} onClick={() => { onModeChange(mode === "login" ? "register" : "login"); setError(""); }}>{mode === "login" ? "إنشاء حساب معلّم" : "لدي حساب — تسجيل الدخول"}</button>
     </form>
   </PlatformDialog>;
 }

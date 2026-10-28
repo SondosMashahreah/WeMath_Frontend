@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { usePlatformData } from "../application/usePlatformData.js";
+import { useCurriculum } from "../../student/application/curriculumContext.js";
+import { useDocumentDraft } from "../application/useDocumentDraft.js";
 import { bookLabel } from "../domain/navigation.js";
-import { request } from "../infrastructure/client.js";
+import { teacherRepository } from "../infrastructure/teacherRepository.js";
 import LoadDialog from "./LoadDialog.jsx";
 import PlatformDialog from "./PlatformDialog.jsx";
 
 const emptyQuestion = () => ({ prompt: "", options: ["", "", ""], correct: 0, explanation: "" });
 
 function EditorForm({ catalog, kind, initial, onClose, onSaved }) {
-  const [draft, setDraft] = useState(() => ({ title: "", grade: 1, book_id: "", lesson_id: "", ...initial }));
-  const [content, setContent] = useState(() => initial?.content || (kind === "plan" ? { objectives: "", steps: "", assessment: "", materials: "", duration: 45 } : { instructions: "", questions: [emptyQuestion()] }));
+  const { draft, setDraft, content, setContent, version, clear, reset } = useDocumentDraft(kind, initial);
   const [busy, setBusy] = useState(false), [error, setError] = useState("");
   const controller = useRef(null);
   useEffect(() => () => controller.current?.abort(), []);
@@ -21,9 +21,10 @@ function EditorForm({ catalog, kind, initial, onClose, onSaved }) {
     event.preventDefault(); if (busy) return;
     if (kind === "assessment" && content.questions.some(q => q.options.length < 2 || q.options.length > 6 || q.options.some(option => !option.trim()) || new Set(q.options.map(option => option.trim())).size !== q.options.length || q.correct >= q.options.length)) { setError("كل سؤال يحتاج خيارين إلى ستة خيارات مختلفة، وتحديد الإجابة الصحيحة."); return; }
     const abort = new AbortController(); controller.current = abort; setBusy(true); setError("");
-    const payload = { kind, title: draft.title, grade: Number(draft.grade), book_id: draft.book_id || null, lesson_id: draft.lesson_id || null, content, ...(initial?.id ? { version: initial.version } : {}) };
+    const payload = { kind, title: draft.title, grade: Number(draft.grade), book_id: draft.book_id || null, lesson_id: draft.lesson_id || null, content, ...(initial?.id ? { version } : {}) };
     try {
-      const saved = await request(`/api/platform/teachers/documents${initial?.id ? `/${initial.id}` : ""}`, { method: initial?.id ? "PUT" : "POST", body: payload, teacher: true, signal: abort.signal });
+      const saved = await teacherRepository.save(initial, payload, abort.signal);
+      clear();
       onSaved(saved);
     } catch (failure) { if (failure.name !== "AbortError") setError(failure.message); }
     finally { if (!abort.signal.aborted) setBusy(false); }
@@ -49,11 +50,12 @@ function EditorForm({ catalog, kind, initial, onClose, onSaved }) {
         <button className="student-secondary-button" type="button" disabled={content.questions.length >= 30} onClick={() => setContent({ ...content, questions: [...content.questions, emptyQuestion()] })}>إضافة سؤال ({content.questions.length}/30)</button>
       </>}
       {error && <p role="alert">{error}</p>}<button className="student-primary-button" disabled={busy}>{busy ? "جاري الحفظ…" : "حفظ"}</button>
+      <button className="student-secondary-button" type="button" disabled={busy} onClick={reset}>تجاهل المسودة والبدء من جديد</button>
     </form>
   </PlatformDialog>;
 }
 
 export default function DocumentEditor(props) {
-  const state = usePlatformData("/api/curriculum/catalog");
-  return state.data ? <EditorForm {...props} catalog={state.data} /> : <LoadDialog state={state} onClose={props.onClose} />;
+  const state = useCurriculum();
+  return state.catalog ? <EditorForm {...props} catalog={state.catalog} /> : <LoadDialog state={state} onClose={props.onClose} />;
 }

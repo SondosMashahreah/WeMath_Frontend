@@ -4,9 +4,12 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/noto-sans-arabic";
 import "./index.css";
 import App from "./App.jsx";
+import { createBrowserRouter } from "react-router-dom";
+import { routes } from "./app/routing/routes.jsx";
+const router = createBrowserRouter(routes, { basename: import.meta.env.BASE_URL });
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <App />
+    <App router={router} />
   </StrictMode>,
 );

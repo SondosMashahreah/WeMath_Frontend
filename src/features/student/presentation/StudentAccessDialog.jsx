@@ -1,18 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import AccountForm from "../../account/presentation/AccountForm.jsx";
 import HexDialog from "../../account/presentation/HexDialog.jsx";
 import { accountRepository } from "../../account/infrastructure/accountRepository.js";
-export default function StudentAccessDialog({ role = "student", onClose, onComplete }) {
-  const [mode, setMode] = useState(role === "student" ? "login" : "choice");
+export default function StudentAccessDialog({ role = "student", mode = "login", onModeChange, onClose, onComplete }) {
   const pendingRequest = useRef(null);
-  useEffect(() => () => pendingRequest.current?.abort(), []);
+  useEffect(() => () => pendingRequest.current?.abort(), [role, mode]);
   function submit(values) {
     pendingRequest.current?.abort();
     const controller = new AbortController();
     pendingRequest.current = controller;
     return accountRepository[mode](values, { role, signal: controller.signal });
   }
-  function changeMode(next) { pendingRequest.current?.abort(); setMode(next); }
+  function changeMode(next) { pendingRequest.current?.abort(); onModeChange(next); }
   return <HexDialog wide={mode === "register"} onClose={onClose} title={role === "parent" ? "مساحة الأهل" : mode === "register" ? "إنشاء حساب طالب" : "تسجيل دخول الطالب"}
     subtitle={mode === "choice" ? "رحلتك تبدأ من هنا" : mode === "login" ? "ادخل باسم المستخدم وكلمة المرور." : role === "parent" ? "حساب واحد لمتابعة حتى خمسة أطفال." : "اختر صفك مرة واحدة، لنفتح لك منهجك مباشرة."}>
     {mode === "choice" ? <div className="student-access-choices">

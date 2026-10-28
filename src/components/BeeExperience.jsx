@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { BEE_THEME, HIVE_ITEMS } from "../lib/beeConfig.js";
 import HiveIcon from "./HiveIcon.jsx";
 
-export default function BeeExperience({ active = true, modalOpen = false, onStudentRequest, onParentRequest }) {
+export default function BeeExperience({ active = true, modalOpen = false, skipIntro = false, onStudentRequest, onParentRequest, onSectionRequest }) {
   const host = useRef(null), canvas = useRef(null), engine = useRef(null);
   const hitTargets = useRef({}), centerButton = useRef(null);
   const [rendererState, setRendererState] = useState("loading");
   const [stage, setStage] = useState("wordmark");
   const [finished, setFinished] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const skipOnMount = useRef(skipIntro);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,6 +21,7 @@ export default function BeeExperience({ active = true, modalOpen = false, onStud
           reduced: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
           onStage: setStage, onFinish: () => setFinished(true), onMenu: setMenuOpen,
         });
+        if (skipOnMount.current) engine.current.skip();
         setRendererState("ready");
       } catch (error) {
         console.error("WE MATH could not start:", error);
@@ -84,7 +86,7 @@ export default function BeeExperience({ active = true, modalOpen = false, onStud
             className={`bee-hit bee-cell${item.lines.length > 1 ? " bee-cell-multiline" : ""}`}
             data-cell={item.id} data-hover-id={item.id} aria-label={item.label}
             onPointerEnter={hover} onPointerLeave={clearHover} onFocus={hover} onBlur={clearHover}
-            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => window.open("https://steam.ps/", "_blank", "noopener,noreferrer") : undefined}
+            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => window.open("https://steam.ps/", "_blank", "noopener,noreferrer") : () => onSectionRequest?.(item.id)}
           >
             <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
               <HiveIcon name={item.id} />

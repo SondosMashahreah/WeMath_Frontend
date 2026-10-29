@@ -26,8 +26,8 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
   const resources = createHivePrimitives();
   const { mesh, material, tube, prism, updatePrism, materials } = resources;
 
-  // Exact WE MATH yellow.
-  // MeshBasicMaterial + toneMapped=false keeps #FFD800 visually unchanged
+  // Exact WE MATH theme accent.
+  // MeshBasicMaterial + toneMapped=false keeps the configured accent visually unchanged
   // by scene lights / environment / ACES Filmic tone mapping.
   const honey = material(BEE_THEME.honey), cream = material(BEE_THEME.cream);
   const gold = material(BEE_THEME.honeyLight, { metalness: 0.55, roughness: 0.24 });

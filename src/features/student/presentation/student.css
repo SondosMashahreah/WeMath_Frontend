@@ -119,17 +119,17 @@
 .progress-lessons span, .progress-lessons time { color: #745f4b; font-size: 11px; }
 @media (max-width: 500px) { .student-input-wrap select { font-size: 16px; } }
 
-/* Mathematics-book palette: beige + #FFD800. */
-.student-experience-root { --student-accent: #FFD800; }
-.student-access-dialog .student-primary-button { color: #503E2B; background: #FFD800; border-color: #C9AB00; }
-.student-access-dialog .student-primary-button:hover { background: #EBC700; }
-.student-input-wrap input:focus { border-color: #B99D00; box-shadow: 0 0 0 3px #FFD80042; }
-.student-input-wrap select:focus-visible { outline-color: #B99D00; }
-.practice-hex { background: linear-gradient(120deg,#FFD800,#F5E7B4); }
-.practice-hex[aria-pressed="true"] { background: #FFD800; color: #503E2B; }
-.polygon-explorer svg { fill: #FFE76A; stroke: #8A7300; }
-.polygon-explorer input { accent-color: #FFD800; }
-.progress-summary > div { background: linear-gradient(140deg,#FFD800,#F5E7CE); }
+/* Orange accent palette: beige + #F78B35. */
+.student-experience-root { --student-accent: #F78B35; }
+.student-access-dialog .student-primary-button { color: #503E2B; background: #F78B35; border-color: #C45C1C; }
+.student-access-dialog .student-primary-button:hover { background: #EF7C24; }
+.student-input-wrap input:focus { border-color: #A84B17; box-shadow: 0 0 0 3px #F78B3542; }
+.student-input-wrap select:focus-visible { outline-color: #A84B17; }
+.practice-hex { background: linear-gradient(120deg,#F78B35,#F7D7B8); }
+.practice-hex[aria-pressed="true"] { background: #F78B35; color: #503E2B; }
+.polygon-explorer svg { fill: #FFB477; stroke: #87371D; }
+.polygon-explorer input { accent-color: #F78B35; }
+.progress-summary > div { background: linear-gradient(140deg,#F78B35,#F5E7CE); }
 
 /* Lesson resource hexagons: React icon on the first face, label on the flipped face. */
 .student-resource-icon-face {
@@ -260,7 +260,7 @@
 /* Keep the actual scrolling fully inside the hexagon content area. */
 .hex-dialog-scroll {
   scrollbar-width: thin;
-  scrollbar-color: #C9AB00 transparent;
+  scrollbar-color: #C45C1C transparent;
   scrollbar-gutter: stable;
   scroll-behavior: smooth;
   padding-inline-start: 18px;
@@ -290,7 +290,7 @@
 }
 
 .hex-dialog-scroll::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #FFD800, #C9AB00);
+  background: linear-gradient(180deg, #F78B35, #C45C1C);
   border: 2px solid transparent;
   background-clip: padding-box;
   border-radius: 999px;
@@ -323,7 +323,7 @@
 }
 
 .student-dialog-close:hover {
-  background: #FFD800;
+  background: #F78B35;
   transform: scale(1.06);
   box-shadow: 0 7px 18px #503E2B35;
 }

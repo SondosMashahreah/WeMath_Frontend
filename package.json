@@ -11,6 +11,7 @@
     "test:geometry": "node scripts/verify-geometry.mjs",
     "test:bee": "node scripts/verify-bee.mjs",
     "test:student": "node --test tests/*.test.mjs",
+    "test:navigation": "node scripts/verify-student-navigation.mjs",
     "test:routing": "node scripts/verify-routing.mjs"
   },
   "dependencies": {

@@ -7,7 +7,8 @@ const read = path => readFileSync(new URL(`../${path}`, import.meta.url), "utf8"
 test("2026 update keeps the requested home contract", () => {
   const config = read("src/lib/beeConfig.js");
   const routes = read("src/app/routing/routes.jsx");
-  assert.match(config, /#FFD800/i);
+  assert.doesNotMatch(config, /#FFD800/i);
+  assert.match(read("src/features/student/presentation/student.css"), /#F78B35/i);
   assert.match(config, /PARP/);
   assert.doesNotMatch(config, /id:\s*["']guest["']/);
   assert.doesNotMatch(routes, /GuestPage/);

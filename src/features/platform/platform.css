@@ -31,11 +31,11 @@
 .competition-details dt { font-weight: 700; }
 .competition-details dd { margin: 0; }
 @media (max-width: 500px) { .platform-form :is(input,select,textarea) { font-size: 16px; } }
-.platform-dialog { --student-accent: #FFD800; }
-.platform-dialog a { color: #6F5D00; }
-.platform-form :is(input,select,textarea):focus { outline-color: #B99D00; }
-.platform-demo { border-inline-start-color: #D4B400; }
-.platform-hex-option[aria-pressed="true"] { background: #FFD800; color: #503E2B; }
+.platform-dialog { --student-accent: #F78B35; }
+.platform-dialog a { color: #87371D; }
+.platform-form :is(input,select,textarea):focus { outline-color: #A84B17; }
+.platform-demo { border-inline-start-color: #C45C1C; }
+.platform-hex-option[aria-pressed="true"] { background: #F78B35; color: #503E2B; }
 @media print {
   body:has(.platform-printable) { background: white; height: auto; overflow: visible; }
   body:has(.platform-printable) * { visibility: hidden; }

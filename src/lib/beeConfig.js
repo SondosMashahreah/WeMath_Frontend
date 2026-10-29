@@ -66,7 +66,7 @@ export const BEE_THEME = {
   icon: "#d54b1d",
 };
 
-// Mathematics-book yellow + beige. Official PARP/STEAM logos keep their own colors.
+// Warm accents + beige. Official PARP/STEAM logos keep their own colors.
 export const SECTOR_COLORS = ["#F72217", "#d8b578"];
 
 // Measured from the supplied 1336 × 740 desktop sketch.

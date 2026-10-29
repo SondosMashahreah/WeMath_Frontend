@@ -6,15 +6,15 @@ export const books = [1, 2].map(grade => ({ id: `book${grade}`, grade, semester:
 const children = [student, { ...student, id: 3, full_name: 'الطالب الثاني', username: 'student.two' }];
 const entries = ['workshops', 'competitions', 'initiatives', 'teacher_resources'].flatMap(section => Array.from({ length: 8 }, (_, i) => ({ id: `${section}-${i}`, section, category: section === 'teacher_resources' ? 'activities' : section === 'initiatives' ? 'schools' : 'scientific', title: `مادة ${section} ${i}`, body: 'تفاصيل المادة التجريبية', summary: '', is_demo: true, archived: false, event_date: '2026-11-10', source_url: null })));
 const ok = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
-export function installRoutingAPI() {
+export function installRoutingAPI({ studentProfile = student, catalog = books } = {}) {
   const calls = [], documents = new Map(); let capacity = 2;
   const original = globalThis.fetch;
   globalThis.fetch = async (address, options = {}) => {
     options.signal?.throwIfAborted();
     const url = new URL(address), path = url.pathname, method = options.method || 'GET', body = options.body ? JSON.parse(options.body) : null, token = options.headers?.Authorization?.replace('Bearer ', '');
     calls.push({ path, search: url.search, method, body, token });
-    if (path === '/api/curriculum/catalog') return ok({ books });
-    if (path === '/api/auth/me') return ok(token === 'parent-token' ? parent : student);
+    if (path === '/api/curriculum/catalog') return ok({ books: catalog });
+    if (path === '/api/auth/me') return ok(token === 'parent-token' ? parent : studentProfile);
     if (path === '/api/auth/login') return ok({ access_token: body.username.startsWith('parent') ? 'parent-token' : 'student-token' });
     if (path === '/api/auth/logout') return ok({ ok: true });
     if (path === '/api/parents/children') return ok({ children: capacity === 2 ? children : Array.from({ length: 5 }, (_, i) => ({ ...student, id: i + 2, full_name: `طفل ${i}` })), max_children: 5 });

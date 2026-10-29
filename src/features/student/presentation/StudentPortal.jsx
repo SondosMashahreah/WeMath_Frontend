@@ -34,8 +34,12 @@ export default function StudentPortal({ curriculum, profile, onHome, onLogout, r
       return;
     }
 
-    // book -> student root
+    // A sole book auto-opens at the root, so exit the curriculum directly.
     if (/\/books\/[^/]+$/.test(pathname)) {
+      if (curriculum.listBooks(profile.grade, profile.track).length === 1) {
+        onHome();
+        return;
+      }
       go(basePath, { replace: true });
       return;
     }
@@ -48,13 +52,13 @@ export default function StudentPortal({ curriculum, profile, onHome, onLogout, r
 
     // student root -> main platform
     if (pathname === basePath) {
-      go("/", { replace: true });
+      onHome();
       return;
     }
 
     // safety fallback
     go(basePath, { replace: true });
-  }, [location.pathname, go, basePath, onHome]);
+  }, [location.pathname, go, basePath, onHome, curriculum, profile.grade, profile.track]);
   useEffect(() => { heading.current?.focus({ preventScroll: true }); scroll.current?.scrollTo({ top: 0, behavior: "instant" }); }, [view.key]);
   useEffect(() => {
     const onKey = event => { if (event.key === "Escape" && !document.querySelector("dialog[open]")) { event.preventDefault(); back(); } };

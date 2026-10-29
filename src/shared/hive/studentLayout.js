@@ -14,10 +14,50 @@ export function studentLayout(width, viewportHeight, items) {
     const centerWidth = Math.min(250, width * .62);
     const gridTop = centerWidth * Math.sqrt(3) / 2 + 65;
     const height = Math.max(viewportHeight, gridTop + (rows - 1) * stepY + stepY / 2 + cellHeight + 45);
-    items.forEach((item, i) => {
-      const column = i % columns, row = Math.floor(i / columns);
-      cells[item.id] = { x: width / 2 + ((columns - 1) / 2 - column) * cellWidth * .8, y: gridTop + cellHeight / 2 + row * stepY + (column % 2) * stepY / 2, width: cellWidth, height: cellHeight };
-    });
+    if (items.length === 7) {
+      const cx = width / 2;
+      const gapX = cellWidth * 0.82;
+      const gapY = stepY;
+
+      const topY = gridTop + cellHeight * 0.55;
+      const midY = topY + gapY;
+      const bottomY = topY + gapY * 2;
+
+      const layout232 = [
+        // left column: 2
+        { x: cx - gapX, y: topY + gapY * 0.5 },
+        { x: cx - gapX, y: bottomY - gapY * 0.5 },
+
+        // middle column: 3
+        { x: cx, y: topY },
+        { x: cx, y: midY },
+        { x: cx, y: bottomY },
+
+        // right column: 2
+        { x: cx + gapX, y: topY + gapY * 0.5 },
+        { x: cx + gapX, y: bottomY - gapY * 0.5 },
+      ];
+
+      items.forEach((item, i) => {
+        const pos = layout232[i];
+        cells[item.id] = {
+          x: pos.x,
+          y: pos.y,
+          width: cellWidth,
+          height: cellHeight,
+        };
+      });
+    } else {
+      items.forEach((item, i) => {
+        const column = i % columns, row = Math.floor(i / columns);
+        cells[item.id] = {
+          x: width / 2 + ((columns - 1) / 2 - column) * cellWidth * .8,
+          y: gridTop + cellHeight / 2 + row * stepY + (column % 2) * stepY / 2,
+          width: cellWidth,
+          height: cellHeight
+        };
+      });
+    }
     return { width, height, mobile, center: { x: width / 2, y: centerWidth * Math.sqrt(3) / 4 + 20, width: centerWidth, height: centerWidth * Math.sqrt(3) / 2 }, cells };
   }
   const reference = DESKTOP_HIVE;

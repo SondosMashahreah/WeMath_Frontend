@@ -15,7 +15,7 @@ test("saved grade opens books; complete books preserve null semester and exact l
   state = selectJourneyItem(state, "g12", curriculum);
   assert.equal(presentJourney(state, curriculum).items.find(item => item.id === "@book").href, books[0].source_url);
   state = selectJourneyItem(state, "u12", curriculum); state = selectJourneyItem(state, "l12", curriculum);
-  assert.deepEqual(presentJourney(state, curriculum).items.map(item => item.id), ["@book", "@learn", "@video", "@practice", "@game", "@completed"]);
+  assert.deepEqual(presentJourney(state, curriculum).items.map(item => item.id), ["@quiz", "@worksheet", "@film", "@activity", "@game", "@story_video"]);
   assert.deepEqual(journeyReducer(state, { type: "back" }), { ...state, lesson: null });
   assert.deepEqual(curriculum.listLessons(1, "g12", "u12"), []);
   assert.deepEqual(curriculum.listUnits(1, "g12"), []);

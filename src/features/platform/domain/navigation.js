@@ -2,10 +2,9 @@ export const EXTENSION_IDS = new Set(["teachers", "guest", "workshops", "competi
 export const PAGE_SIZE = 6;
 export const TITLES = { teachers: "المعلّم", guest: "الزائر", workshops: "الورشات", competitions: "المسابقات", initiatives: "المبادرات وقصص النجاح", research: "الأبحاث والدراسات", assistant: "Algo", teacher_resources: "موارد المعلّم" };
 export const CATEGORIES = {
-  workshops: { scientific: "ورش علمية", universities: "جامعات ومؤسسات", directorates: "مديريات التربية" },
-  competitions: { scientific: "مسابقات علمية", international: "مسابقات دولية" },
+  workshops: { scientific: "ورش عالمية", universities: "جامعات ومؤسسات", directorates: "مديريات التربية" },
+  competitions: { scientific: "محلية", international: "عالمية" },
   initiatives: { schools: "مبادرات المدارس", directorates: "مبادرات المديريات", teachers: "مبادرات المعلمين", students: "مبادرات الطلاب", teacher_stories: "قصص نجاح المعلمين", student_stories: "قصص نجاح الطلاب", school_stories: "قصص نجاح المدارس" },
-  research: { scientific: "أبحاث علمية", classroom: "أبحاث صفية" },
   teacher_resources: { activities: "أنشطة وألعاب", questions: "بنك الأسئلة", preparation: "نماذج تحضير" },
 };
 export function hiveItem(id, label, extra = {}) {

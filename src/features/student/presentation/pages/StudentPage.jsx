@@ -6,7 +6,8 @@ import RouteFeedback from "../../../../shared/presentation/RouteFeedback.jsx";
 import { usePageNavigation } from "../../../../shared/routing/usePageNavigation.js";
 export default function StudentPage({ account = false }) {
   const { profile, clear } = useAccount(), curriculum = useCurriculum(), location = useLocation(), { go } = usePageNavigation();
-  if (!profile.grade) return <Navigate replace to={`/student/profile?next=${encodeURIComponent(location.pathname + location.search)}`} />;
+  const profileIncomplete = !profile.grade || [11, 12].includes(Number(profile.grade)) && !profile.track;
+  if (profileIncomplete) return <Navigate replace to={`/student/profile?next=${encodeURIComponent(location.pathname + location.search)}`} />;
   if (!curriculum.repository) return <RouteFeedback title="المنهاج" message={curriculum.error?.message || "جاري تحميل المنهاج…"} retry={curriculum.error ? curriculum.retry : undefined} />;
-  return <StudentPortal key={`${profile.id}-${profile.grade}`} profile={profile} curriculum={curriculum.repository} accountOpen={account} onHome={() => go("/")} onLogout={() => { clear(); go("/", { replace: true }); }} />;
+  return <StudentPortal key={`${profile.id}-${profile.grade}-${profile.track || "common"}`} profile={profile} curriculum={curriculum.repository} accountOpen={account} onHome={() => go("/")} onLogout={() => { clear(); go("/", { replace: true }); }} />;
 }

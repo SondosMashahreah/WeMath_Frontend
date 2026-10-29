@@ -1,7 +1,7 @@
 // Pure URL contracts. No React, network or user credentials.
 const segment = value => encodeURIComponent(String(value));
-export const HOME_PATHS = Object.freeze({ students: "/student", parents: "/parent", teachers: "/teachers", guest: "/guest", workshops: "/workshops", competitions: "/competitions", initiatives: "/initiatives", research: "/research", assistant: "/assistant" });
-export const ACTIVITY_IDS = Object.freeze(["learn", "video", "practice", "game"]);
+export const HOME_PATHS = Object.freeze({ students: "/student", parents: "/parent", teachers: "/teachers", workshops: "/workshops", competitions: "/competitions", initiatives: "/initiatives", assistant: "/assistant" });
+export const ACTIVITY_IDS = Object.freeze(["quiz", "worksheet", "film", "activity", "game", "story_video"]);
 export function studentPath({ semester, unit, lesson, activity } = {}, base = "/student") {
   let path = base;
   if (semester) path += `/books/${segment(semester)}`;

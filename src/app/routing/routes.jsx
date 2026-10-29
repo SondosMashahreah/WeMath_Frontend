@@ -15,7 +15,6 @@ import TeacherDocumentsPage from "../../features/platform/presentation/pages/Tea
 import TeacherDocumentPage from "../../features/platform/presentation/pages/TeacherDocumentPage.jsx";
 import TeacherDocumentEditorPage from "../../features/platform/presentation/pages/TeacherDocumentEditorPage.jsx";
 import ContentPage from "../../features/platform/presentation/pages/ContentPage.jsx";
-import GuestPage from "../../features/platform/presentation/pages/GuestPage.jsx";
 import AssistantPage from "../../features/platform/presentation/pages/AssistantPage.jsx";
 
 // Pages come from the URL; forms own transient UI state. The layout stays mounted.
@@ -55,7 +54,7 @@ export const routes = [{
         { path: "account", element: <ParentPage key="account" page="account" /> },
         ...["add", "create", "link"].map(page => ({ path: `children/${page}`, element: <ParentPage key={page} page={page} /> })),
         { path: "children/:childId", element: <ParentPage /> },
-        ...["edit", "password", "progress"].map(page => ({ path: `children/:childId/${page}`, element: <ParentPage key={page} page={page} /> })),
+        ...["edit", "password", "progress", "results"].map(page => ({ path: `children/:childId/${page}`, element: <ParentPage key={page} page={page} /> })),
         { path: "children/:childId/curriculum", children: journeyRoutes(<ChildCurriculumPage />) },
       ] }] },
     ] },
@@ -75,8 +74,7 @@ export const routes = [{
         { path: "workshops", children: contentRoutes("workshops", "/teachers/workshops", "/teachers") },
       ] },
     ] },
-    ...["workshops", "competitions", "initiatives", "research"].map(section => ({ path: section, children: contentRoutes(section) })),
-    { path: "guest", children: [{ index: true, element: <GuestPage /> }, ...["grades/:grade", "grades/:grade/books/:bookId"].map(path => ({ path, element: <GuestPage /> }))] },
+    ...["workshops", "competitions", "initiatives"].map(section => ({ path: section, children: contentRoutes(section) })),
     { path: "assistant", children: [{ index: true, element: <AssistantPage /> }, ...["calculate", "search"].map(mode => ({ path: mode, element: <AssistantPage mode={mode} /> }))] },
     { path: "*", element: <RouteFeedback /> },
   ],

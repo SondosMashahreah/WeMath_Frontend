@@ -6,7 +6,7 @@ import { createCurriculumRepository } from '../src/features/student/infrastructu
 import { books } from './support/routing-api.mjs';
 const curriculum = createCurriculumRepository(books);
 test('URL contracts cover nested journeys, independent roles and encoded identifiers', () => {
-  assert.equal(studentPath({ semester: 'book1', unit: 'unit1', lesson: 'lesson1', activity: 'practice' }), '/student/books/book1/units/unit1/lessons/lesson1/activities/practice');
+  assert.equal(studentPath({ semester: 'book1', unit: 'unit1', lesson: 'lesson1', activity: 'worksheet' }), '/student/books/book1/units/unit1/lessons/lesson1/activities/worksheet');
   assert.equal(studentPath({ semester: 'a/b' }, childPath(7, 'curriculum')), '/parent/children/7/curriculum/books/a%2Fb');
   assert.equal(teacherCurriculumPath({ grade: 1, bookId: 'book1', unitId: 'unit1', lessonId: 'lesson1' }), '/teachers/curriculum/grades/1/books/book1/units/unit1/lessons/lesson1');
   assert.equal(contentPath('/workshops', 'scientific', 'entry/1'), '/workshops/scientific/entry%2F1');
@@ -24,8 +24,8 @@ test('query state rejects invalid pagination and calendar values', () => {
 });
 test('direct lesson links must belong to the account grade and every URL ancestor', () => {
   const state = { grade: 1, semester: 'book1', unit: 'unit1', lesson: 'lesson1-1' };
-  assert.equal(validJourney(state, curriculum, 'practice'), true);
-  for (const changes of [{ grade: 2 }, { semester: 'book2' }, { unit: 'unit2' }, { lesson: 'lesson2-1' }, { semester: null }, { unit: null }]) assert.equal(validJourney({ ...state, ...changes }, curriculum, 'practice'), false);
+  assert.equal(validJourney(state, curriculum, 'worksheet'), true);
+  for (const changes of [{ grade: 2 }, { semester: 'book2' }, { unit: 'unit2' }, { lesson: 'lesson2-1' }, { semester: null }, { unit: null }]) assert.equal(validJourney({ ...state, ...changes }, curriculum, 'worksheet'), false);
   assert.equal(validJourney(state, curriculum, 'unknown'), false);
   assert.equal(validJourney({ grade: 1 }, curriculum), true);
   assert.equal(validJourney({ grade: 1 }, curriculum, 'game'), false);

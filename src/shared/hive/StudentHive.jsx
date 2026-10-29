@@ -1,4 +1,21 @@
 import { useEffect, useRef, useState } from "react";
+import {
+  FaQuestionCircle,
+  FaFileAlt,
+  FaFilm,
+  FaPuzzlePiece,
+  FaGamepad,
+  FaBookOpen,
+} from "react-icons/fa";
+
+const LESSON_RESOURCE_ICONS = {
+  "@quiz": FaQuestionCircle,
+  "@worksheet": FaFileAlt,
+  "@film": FaFilm,
+  "@activity": FaPuzzlePiece,
+  "@game": FaGamepad,
+  "@story_video": FaBookOpen,
+};
 
 function fitTextClass(value = "") {
   const length = String(value).trim().length;
@@ -10,18 +27,47 @@ function fitTextClass(value = "") {
 }
 
 function CellContent({ item, back = false }) {
-  const labelText = item.lines?.join(" ") || item.label || "";
-  return <span className={`student-cell-content student-cell-${item.kind}`}>
-    {item.kind === "grade" ? <>
-      {back && <span className="student-cell-caption">الصف</span>}
-      <span className="student-cell-number" dir="ltr">{item.number}</span>
-    </> : item.lines.map((line, i) => <span
-      key={i}
-      className={/^\d+$/.test(line)
-        ? "student-cell-number"
-        : `student-cell-caption ${fitTextClass(labelText)}`}
-    >{line}</span>)}
-  </span>;
+  const faceLines = (back ? item.backLines : item.frontLines) || item.lines || [];
+  const labelText = faceLines.join(" ") || item.label || "";
+  const ResourceIcon = LESSON_RESOURCE_ICONS[item.id];
+
+  if (ResourceIcon && !back) {
+    return (
+      <span className={`student-cell-content student-cell-${item.kind} student-resource-icon-face`}>
+        <ResourceIcon
+          className="student-resource-icon"
+          aria-hidden="true"
+          focusable="false"
+        />
+      </span>
+    );
+  }
+
+  return (
+    <span className={`student-cell-content student-cell-${item.kind}`}>
+      {item.kind === "grade" ? (
+        <>
+          {back && <span className="student-cell-caption">الصف</span>}
+          <span className="student-cell-number" dir="ltr">
+            {item.number}
+          </span>
+        </>
+      ) : (
+        faceLines.map((line, i) => (
+          <span
+            key={i}
+            className={
+              /^\d+$/.test(line)
+                ? "student-cell-number"
+                : `student-cell-caption ${fitTextClass(labelText)}`
+            }
+          >
+            {line}
+          </span>
+        ))
+      )}
+    </span>
+  );
 }
 
 export default function StudentHive({ view, selectedLesson, onSelect, onBack }) {

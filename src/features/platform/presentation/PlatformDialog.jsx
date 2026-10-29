@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef } from "react";
+import HexScrollIndicator from "../../../shared/presentation/HexScrollIndicator.jsx";
 
 export default function PlatformDialog({ title, subtitle, onClose, wide = false, children }) {
   const ref = useRef(null), titleId = useId();
@@ -7,8 +8,11 @@ export default function PlatformDialog({ title, subtitle, onClose, wide = false,
     onCancel={event => { event.preventDefault(); onClose(); }} onClick={event => { if (event.target === ref.current) onClose(); }}>
     <section className="student-access-shell">
       <button className="student-dialog-close student-icon-button platform-no-print" type="button" aria-label="إغلاق" onClick={onClose}>×</button>
-      <div className="student-access-heading platform-no-print"><span className="student-eyebrow">WE MATH</span><h2 id={titleId}>{title}</h2>{subtitle && <p>{subtitle}</p>}</div>
-      {children}
+      <div className="hex-dialog-scroll">
+        <div className="student-access-heading platform-no-print"><span className="student-eyebrow">WE MATH</span><h2 id={titleId}>{title}</h2>{subtitle && <p>{subtitle}</p>}</div>
+        {children}
+      </div>
+      <HexScrollIndicator />
     </section>
   </dialog>;
 }

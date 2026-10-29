@@ -8,26 +8,34 @@
 .platform-dialog a.student-primary-button { color: #fff8ed; text-decoration: none; }
 .platform-form, .platform-actions { display: grid; gap: 15px; }
 .platform-form label { display: grid; gap: 7px; font-size: 12px; font-weight: 750; }
-.platform-form input, .platform-form select, .platform-form textarea { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit; font-size: 14px; color: #503e2b; background: #fffcf6; border: 1px solid #bca891; border-radius: 8px; }
+.platform-form input, .platform-form select, .platform-form textarea { box-sizing: border-box; width: 100%; min-width: 0; min-height: 44px; padding: 10px 12px; font: inherit; font-size: 14px; color: #503e2b; background: #fffcf6; border: 1px solid #BCA891; border-radius: 8px; }
 .platform-form textarea { resize: vertical; min-height: 80px; }
-.platform-form :is(input,select,textarea):focus { outline: 2px solid #9c4c2b; outline-offset: 2px; }
+.platform-form :is(input,select,textarea):focus { outline: 2px solid #9C4C2B; outline-offset: 2px; }
 .platform-dialog button:disabled { cursor: wait; opacity: .55; }
-.platform-form fieldset, .platform-practice fieldset { min-width: 0; border: 1px solid #bca891; border-radius: 8px; padding: 14px; display: grid; gap: 12px; }
+.platform-form fieldset, .platform-practice fieldset { min-width: 0; border: 1px solid #BCA891; border-radius: 8px; padding: 14px; display: grid; gap: 12px; }
 .platform-form legend, .platform-practice legend { padding: 0 6px; font-size: 13px; }
 .platform-form [role="alert"], .platform-actions [role="alert"] { color: #9a2e22; }
 .platform-prose { white-space: pre-wrap; }
-.platform-demo { border-inline-start: 3px solid #b06a32; padding-inline-start: 12px; color: #795039; }
+.platform-demo { border-inline-start: 3px solid #B06A32; padding-inline-start: 12px; color: #795039; }
 .platform-status { position: fixed; bottom: 10px; left: 15px; right: 15px; z-index: 1; pointer-events: none; text-align: center; font-size: 12px; color: #503e2b; margin: 0; }
 .platform-status button { pointer-events: auto; margin-inline-start: 10px; font: inherit; border: 0; padding: 5px 10px; border-radius: 4px; background: #fff8ed; color: inherit; }
 .platform-options { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
 .platform-hex-option { clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); border: 0; min-width: 72px; min-height: 66px; padding: 12px 22px; background: #ecd6b6; font: inherit; }
 .platform-hex-option[aria-pressed="true"] { background: #ad3b1b; color: #fff8ed; }
 .platform-conversation { display: grid; gap: 14px; margin-bottom: 20px; }
-.platform-conversation article { border-bottom: 1px solid #bca891; }
+.platform-conversation article { border-bottom: 1px solid #BCA891; }
 .platform-conversation ol { text-align: left; }
 .platform-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; }
 .platform-printable { margin-bottom: 20px; }
+.competition-details { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; text-align: start; margin: 18px 0; }
+.competition-details dt { font-weight: 700; }
+.competition-details dd { margin: 0; }
 @media (max-width: 500px) { .platform-form :is(input,select,textarea) { font-size: 16px; } }
+.platform-dialog { --student-accent: #FFD800; }
+.platform-dialog a { color: #6F5D00; }
+.platform-form :is(input,select,textarea):focus { outline-color: #B99D00; }
+.platform-demo { border-inline-start-color: #D4B400; }
+.platform-hex-option[aria-pressed="true"] { background: #FFD800; color: #503E2B; }
 @media print {
   body:has(.platform-printable) { background: white; height: auto; overflow: visible; }
   body:has(.platform-printable) * { visibility: hidden; }
@@ -39,4 +47,68 @@
   body:has(.platform-printable) :is(.platform-no-print,.student-hive-stage,.platform-status,.bee-experience), body:has(.platform-printable) .student-access-shell::before, body:has(.platform-printable) .student-access-shell::after { display: none; }
   body:has(.platform-printable) .platform-dialog::backdrop { display: none; }
   .platform-print-question { break-inside: avoid; margin-block: 18px; }
+}
+
+
+/* WE MATH FINAL CLOSE X - ABSOLUTELY NO BOX */
+button.student-dialog-close,
+.student-access-dialog button.student-dialog-close,
+.student-access-shell button.student-dialog-close,
+button.student-dialog-close.student-icon-button {
+  all: unset !important;
+
+  position: absolute !important;
+  z-index: 50 !important;
+
+  top: 3% !important;
+  left: 23.3% !important;
+
+  width: 24px !important;
+  height: 24px !important;
+
+  display: grid !important;
+  place-items: center !important;
+
+  box-sizing: border-box !important;
+
+  color: #503E2B !important;
+  cursor: pointer !important;
+
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+
+  appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+button.student-dialog-close:hover,
+button.student-dialog-close:focus,
+button.student-dialog-close:focus-visible,
+button.student-dialog-close:active {
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button.student-dialog-close::before,
+button.student-dialog-close::after {
+  content: none !important;
+  display: none !important;
+}
+
+button.student-dialog-close svg {
+  display: block !important;
+  width: 17px !important;
+  height: 17px !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+
+  background: transparent !important;
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
 }

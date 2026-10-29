@@ -4,7 +4,7 @@
 .student-portal button, .student-access-dialog button { color: inherit; cursor: pointer; }
 .student-portal button:focus-visible, .student-access-dialog button:focus-visible { outline: 3px solid #765035; outline-offset: 4px; }
 .student-portal h1:focus, .student-access-heading h2:focus { outline: none; }
-.student-icon-button { width: 40px; height: 40px; padding: 10px; display: grid; place-items: center; border: 1px solid #503e2b25; border-radius: 50%; background: transparent; flex-shrink: 0; }
+.student-icon-button { width: 40px; height: 40px; padding: 10px; display: grid; place-items: center; border: 1px solid #503E2B25; border-radius: 50%; background: transparent; flex-shrink: 0; }
 .student-icon-button:hover { background: #fff8ed60; }
 .student-icon-button svg { width: 16px; height: 16px; }
 .student-hive-stage { height: 100%; }
@@ -29,7 +29,7 @@
 .student-access-dialog { border: 0; padding: 0; color: var(--ink); background: transparent; width: 660px; max-width: calc(100vw - 20px); max-height: calc(100dvh - 24px); overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; }
 .student-access-dialog::backdrop { background: #503e2b4d; backdrop-filter: blur(8px); }
 .student-access-register { width: 860px; }
-.student-access-shell { position: relative; min-height: 570px; padding: 78px 20% 82px; isolation: isolate; filter: drop-shadow(12px 20px 0 #503e2b14); }
+.student-access-shell { position: relative; min-height: 570px; padding: 78px 20% 82px; isolation: isolate; filter: drop-shadow(12px 20px 0 #503E2B14); }
 .student-access-shell::before, .student-access-shell::after { content: ""; position: absolute; z-index: -1; inset: 0; background: #f8f1e6; clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%); }
 .student-access-shell::after { inset: 9px; background: linear-gradient(125deg,#fffaf2,#f4e4cb); clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%,25% 0,25.6% 1.2%,1.2% 50%,25.6% 98.8%,74.4% 98.8%,98.8% 50%,74.4% 1.2%,25.6% 1.2%); box-shadow: inset 0 0 0 2px #cfbca5; }
 .student-access-heading { text-align: center; }
@@ -42,16 +42,16 @@
 .student-access-back { position: absolute; top: 100px; right: 13%; border: none; }
 .student-access-choices { display: grid; gap: 13px; margin: 32px auto 15px; max-width: 300px; }
 .student-primary-button, .student-secondary-button { min-height: 48px; display: flex; justify-content: center; align-items: center; gap: 16px; width: 100%; border-radius: 9px; padding: 11px 20px; font-size: 14px; font-weight: 750; transition: background .18s ease, transform .18s ease; }
-.student-access-dialog .student-primary-button { color: #fff8ed; background: var(--student-accent); border: 1px solid var(--student-accent); }
+.student-access-dialog .student-primary-button { color: #fff8ed; background: #E6AE70; border: 1px solid var(--student-accent); }
 .student-access-dialog .student-primary-button:hover { background: #8d2f16; transform: translateY(-1px); }
-.student-secondary-button { border: 1px solid #aa8161; background: #fffaf240; }
+.student-secondary-button { border: 1px solid #AA8161; background: #fffaf240; }
 .student-secondary-button:hover { background: #f5e4cd; }
 .student-fields { display: grid; gap: 15px; margin: 0 0 23px; }
 .is-register .student-fields { grid-template-columns: 1fr 1fr; gap: 16px 20px; }
 .student-field { min-width: 0; }
 .student-field label { display: block; margin-bottom: 7px; font-size: 12px; font-weight: 750; }
 .student-input-wrap { position: relative; }
-.student-input-wrap input { font: inherit; font-size: 14px; color: #503e2b; border: 1px solid #bca891; background: #fffcf6; border-radius: 8px; min-height: 46px; padding: 9px 12px; width: 100%; outline: none; }
+.student-input-wrap input { font: inherit; font-size: 14px; color: #503e2b; border: 1px solid #BCA891; background: #fffcf6; border-radius: 8px; min-height: 46px; padding: 9px 12px; width: 100%; outline: none; }
 .student-input-wrap input:focus { border-color: #9c4c2b; box-shadow: 0 0 0 3px #9c4c2b20; }
 .student-input-wrap input[aria-invalid="true"] { border-color: #a33224; }
 .student-input-wrap input[name="password"] { padding-right: 45px; }
@@ -92,14 +92,14 @@
 .account-fieldset:disabled { opacity: .65; }
 .optional-label, .field-hint { font-size: 10px; color: #745f4b; font-weight: 400; }
 .field-hint { display: block; margin-top: 4px; }
-.student-input-wrap select { font: inherit; font-size: 14px; color: #503e2b; border: 1px solid #bca891; background: #fffcf6; border-radius: 8px; min-height: 46px; padding: 9px 12px; width: 100%; }
-.student-input-wrap select:focus-visible { outline: 2px solid #9c4c2b; outline-offset: 2px; }
+.student-input-wrap select { font: inherit; font-size: 14px; color: #503e2b; border: 1px solid #BCA891; background: #fffcf6; border-radius: 8px; min-height: 46px; padding: 9px 12px; width: 100%; }
+.student-input-wrap select:focus-visible { outline: 2px solid #9C4C2B; outline-offset: 2px; }
 .account-checkbox { display: flex; align-items: center; gap: 10px; margin: 0 0 20px; font-size: 13px; }
 .form-failure { color: #9a2e22; font-size: 13px; line-height: 1.8; }
 .account-grade { text-align: center; margin-bottom: 30px; }
 .student-access-dialog p { line-height: 1.8; }
 .student-cell[href] { color: inherit; text-decoration: none; }
-.demo-badge { display: inline-block; font-size: 11px; border: 1px solid #aa8161; border-radius: 20px; padding: 4px 12px; }
+.demo-badge { display: inline-block; font-size: 11px; border: 1px solid #AA8161; border-radius: 20px; padding: 4px 12px; }
 .lesson-resource { text-align: center; font-size: 14px; }
 .lesson-resource video { width: 100%; margin-top: 15px; border-radius: 8px; }
 .practice-choices { display: flex; gap: 12px; justify-content: center; }
@@ -115,6 +115,723 @@
 .progress-summary span { font-size: 11px; }
 .progress-empty { text-align: center; font-size: 13px; }
 .progress-lessons { padding: 0; list-style: none; }
-.progress-lessons li { padding: 14px 0; border-bottom: 1px solid #bca89170; display: grid; gap: 7px; font-size: 13px; }
+.progress-lessons li { padding: 14px 0; border-bottom: 1px solid #BCA89170; display: grid; gap: 7px; font-size: 13px; }
 .progress-lessons span, .progress-lessons time { color: #745f4b; font-size: 11px; }
 @media (max-width: 500px) { .student-input-wrap select { font-size: 16px; } }
+
+/* Mathematics-book palette: beige + #FFD800. */
+.student-experience-root { --student-accent: #FFD800; }
+.student-access-dialog .student-primary-button { color: #503E2B; background: #FFD800; border-color: #C9AB00; }
+.student-access-dialog .student-primary-button:hover { background: #EBC700; }
+.student-input-wrap input:focus { border-color: #B99D00; box-shadow: 0 0 0 3px #FFD80042; }
+.student-input-wrap select:focus-visible { outline-color: #B99D00; }
+.practice-hex { background: linear-gradient(120deg,#FFD800,#F5E7B4); }
+.practice-hex[aria-pressed="true"] { background: #FFD800; color: #503E2B; }
+.polygon-explorer svg { fill: #FFE76A; stroke: #8A7300; }
+.polygon-explorer input { accent-color: #FFD800; }
+.progress-summary > div { background: linear-gradient(140deg,#FFD800,#F5E7CE); }
+
+/* Lesson resource hexagons: React icon on the first face, label on the flipped face. */
+.student-resource-icon-face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-resource-icon {
+  width: clamp(38px, calc(var(--cell-size) * 0.34), 76px);
+  height: clamp(38px, calc(var(--cell-size) * 0.34), 76px);
+  color: #503E2B;
+  filter: drop-shadow(0 1px 0 #FFFAF0);
+}
+
+/* WE MATH FIXED HEX DIALOGS */
+.student-access-dialog,
+.student-access-dialog.student-access-register {
+  width: min(700px, calc(100vw - 32px));
+  height: min(606px, calc(100dvh - 32px));
+  max-width: none;
+  max-height: none;
+  overflow: visible;
+  margin: auto;
+}
+
+.student-access-shell,
+.student-access-register .student-access-shell {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+  isolation: isolate;
+  filter: drop-shadow(12px 20px 0 #503e2b14);
+}
+
+.student-access-shell::before,
+.student-access-shell::after {
+  inset: 0;
+  clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+}
+
+.student-access-shell::after {
+  inset: 9px;
+  display: block;
+  clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%,25% 0,25.6% 1.2%,1.2% 50%,25.6% 98.8%,74.4% 98.8%,98.8% 50%,74.4% 1.2%,25.6% 1.2%);
+}
+
+.hex-dialog-scroll {
+  position: absolute;
+  z-index: 1;
+  top: 12%;
+  right: 17%;
+  bottom: 12%;
+  left: 17%;
+  padding: 10px 14px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-gutter: stable;
+}
+
+.hex-dialog-scroll::-webkit-scrollbar { width: 7px; }
+.hex-dialog-scroll::-webkit-scrollbar-thumb { background: #BCA891; border-radius: 999px; }
+
+.student-dialog-close { z-index: 3; top: 12%; left: 12%; }
+.student-access-back { z-index: 3; top: 12%; right: 12%; }
+
+@media (max-width: 799px) {
+  .student-access-dialog,
+  .student-access-dialog.student-access-register {
+    width: min(94vw, 620px);
+    height: min(81.4vw, 78dvh);
+  }
+
+  .student-access-shell,
+  .student-access-register .student-access-shell {
+    min-height: 0;
+    padding: 0;
+  }
+
+  .student-access-shell::before,
+  .student-access-shell::after {
+    clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+  }
+
+  .student-access-shell::after {
+    display: block;
+    inset: 7px;
+    clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%,25% 0,25.8% 1.4%,1.4% 50%,25.8% 98.6%,74.2% 98.6%,98.6% 50%,74.2% 1.4%,25.8% 1.4%);
+  }
+
+  .hex-dialog-scroll {
+    top: 13%;
+    right: 15%;
+    bottom: 13%;
+    left: 15%;
+    padding: 8px 8px 16px;
+  }
+
+  .student-dialog-close { top: 10%; left: 10%; }
+  .student-access-back { top: 10%; right: 10%; }
+}
+
+@media (max-width: 500px) {
+  .student-access-dialog,
+  .student-access-dialog.student-access-register {
+    width: calc(100vw - 18px);
+    height: min(calc((100vw - 18px) * .866), 76dvh);
+  }
+
+  .student-access-register .student-access-shell { padding: 0; }
+
+  .hex-dialog-scroll {
+    top: 12%;
+    right: 14%;
+    bottom: 12%;
+    left: 14%;
+  }
+}
+
+/* WE MATH DIALOG SCROLL + CLOSE POLISH */
+
+/* Keep the actual scrolling fully inside the hexagon content area. */
+.hex-dialog-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #C9AB00 transparent;
+  scrollbar-gutter: stable;
+  scroll-behavior: smooth;
+  padding-inline-start: 18px;
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 18px,
+    #000 calc(100% - 18px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 18px,
+    #000 calc(100% - 18px),
+    transparent 100%
+  );
+}
+
+.hex-dialog-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.hex-dialog-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  margin-block: 24px;
+}
+
+.hex-dialog-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #FFD800, #C9AB00);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+
+.hex-dialog-scroll::-webkit-scrollbar-thumb:hover {
+  background: #B59A00;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+/* Close control: fixed at the upper-left corner INSIDE the hexagon. */
+.student-dialog-close {
+  position: absolute;
+  z-index: 20;
+  top: 8.5%;
+  left: 19%;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid #BCA891;
+  border-radius: 50%;
+  background: #FFFAF0E8;
+  color: #503E2B;
+  box-shadow: 0 5px 14px #503E2B25;
+  backdrop-filter: blur(4px);
+  transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.student-dialog-close:hover {
+  background: #FFD800;
+  transform: scale(1.06);
+  box-shadow: 0 7px 18px #503E2B35;
+}
+
+.student-dialog-close:active {
+  transform: scale(.96);
+}
+
+.student-dialog-close svg {
+  width: 17px;
+  height: 17px;
+}
+
+.platform-dialog .student-dialog-close {
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.student-access-back {
+  top: 8.5%;
+  right: 19%;
+}
+
+.hex-dialog-scroll {
+  top: 13.5%;
+  bottom: 11%;
+}
+
+@media (max-width: 799px) {
+  .student-dialog-close {
+    top: 8%;
+    left: 17%;
+    width: 36px;
+    height: 36px;
+  }
+
+  .student-access-back {
+    top: 8%;
+    right: 17%;
+  }
+
+  .hex-dialog-scroll {
+    top: 14%;
+    right: 15%;
+    bottom: 12%;
+    left: 15%;
+    padding-inline-start: 14px;
+  }
+
+  .hex-dialog-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+}
+
+@media (max-width: 500px) {
+  .student-dialog-close {
+    top: 7.5%;
+    left: 16%;
+    width: 34px;
+    height: 34px;
+  }
+
+  .student-access-back {
+    top: 7.5%;
+    right: 16%;
+  }
+
+  .hex-dialog-scroll {
+    top: 14%;
+    right: 14%;
+    bottom: 12%;
+    left: 14%;
+    padding-inline-start: 10px;
+  }
+}
+
+/* WE MATH HEX EDGE SCROLL V3 */
+
+.hex-dialog-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.hex-dialog-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+.hex-edge-scroll {
+  position: absolute;
+  z-index: 18;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hex-edge-scroll-track {
+  fill: none;
+  stroke: rgba(184, 120, 88, 0.20);
+  stroke-width: 4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.hex-edge-scroll-thumb {
+  fill: none;
+  stroke: #B87858;
+  stroke-width: 9px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 1px rgba(255,248,237,.9))
+    drop-shadow(0 2px 2px rgba(80,62,43,.12));
+}
+
+.hex-scroll-arrow {
+  fill: #B87858;
+  pointer-events: all;
+  cursor: pointer;
+}
+
+.student-dialog-close {
+  top: 3% !important;
+  left: 23.3% !important;
+  width: 30px !important;
+  height: 30px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #503E2B !important;
+}
+
+@media (max-width: 799px) {
+  .hex-edge-scroll-track {
+    stroke-width: 3px;
+  }
+
+  .hex-edge-scroll-thumb {
+    stroke-width: 8px;
+  }
+}
+
+@media (max-width: 500px) {
+  .hex-edge-scroll-track {
+    stroke-width: 3px;
+  }
+
+  .hex-edge-scroll-thumb {
+    stroke-width: 7px;
+  }
+}
+
+
+/* WE MATH FINAL PRIMARY BUTTON COLOR */
+.student-access-dialog .student-primary-button,
+.student-access-shell .student-primary-button {
+  background: #E6AE70 !important;
+  border-color: #D89558 !important;
+  color: #503E2B !important;
+}
+
+.student-access-dialog .student-primary-button:hover,
+.student-access-shell .student-primary-button:hover {
+  background: #D89558 !important;
+  border-color: #CC844A !important;
+  color: #503E2B !important;
+}
+
+
+/* WE MATH MOBILE HEX SAFE CONTENT */
+@media (max-width: 799px) {
+  .student-access-dialog,
+  .student-access-dialog.student-access-register {
+    width: min(600px, calc(100vw - 12px)) !important;
+    height: min(600px, calc(100dvh - 12px)) !important;
+  }
+
+  .student-access-shell,
+  .student-access-register .student-access-shell {
+    overflow: hidden !important;
+  }
+
+  /*
+   * Keep all form controls inside the safe rectangular area
+   * of the hexagon. The slanted corners remain empty.
+   */
+  .hex-dialog-scroll {
+    top: 12.5% !important;
+    bottom: 12.5% !important;
+
+    left: 50% !important;
+    right: auto !important;
+
+    width: 64% !important;
+    max-width: 380px !important;
+
+    transform: translateX(-50%) !important;
+
+    box-sizing: border-box !important;
+    padding: 8px 4px 22px !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .hex-dialog-scroll > *,
+  .student-fields,
+  .student-access-choices,
+  .student-primary-button,
+  .student-secondary-button {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-fields,
+  .student-access-choices {
+    width: 100% !important;
+  }
+
+  .student-primary-button,
+  .student-secondary-button {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .hex-dialog-scroll {
+    width: 66% !important;
+    max-width: none !important;
+    top: 11.5% !important;
+    bottom: 12.5% !important;
+  }
+}
+
+
+/* =========================================================
+   WE MATH ? FIXED MOBILE HEX DIALOG
+   Every popup keeps the exact same regular-hex proportions.
+   Content NEVER changes the dialog dimensions.
+   ========================================================= */
+
+@media (max-width: 799px) {
+
+  .student-access-dialog,
+  .student-access-dialog.student-access-register {
+    /*
+     * Regular flat-top hexagon:
+     * width / height = 2 / sqrt(3) = 1.154700538
+     *
+     * Width is limited by BOTH screen width and screen height,
+     * so the hexagon never stretches vertically.
+     */
+    width: min(
+      700px,
+      calc(100vw - 12px),
+      calc((100dvh - 12px) * 1.154700538)
+    ) !important;
+
+    height: auto !important;
+    aspect-ratio: 1.154700538 / 1 !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    max-width: none !important;
+    max-height: none !important;
+
+    margin: auto !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  .student-access-shell,
+  .student-access-register .student-access-shell {
+    position: relative !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Same regular hex on EVERY popup */
+  .student-access-shell::before,
+  .student-access-shell::after {
+    clip-path: polygon(
+      25% 0,
+      75% 0,
+      100% 50%,
+      75% 100%,
+      25% 100%,
+      0 50%
+    ) !important;
+  }
+
+  .student-access-shell::after {
+    display: block !important;
+    inset: 9px !important;
+  }
+
+  /*
+   * Only this area scrolls.
+   * It sits safely inside the slanted sides.
+   */
+  .hex-dialog-scroll {
+    position: absolute !important;
+    z-index: 1 !important;
+
+    top: 11.5% !important;
+    bottom: 11.5% !important;
+
+    left: 15% !important;
+    right: 15% !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    transform: none !important;
+
+    padding: 8px 6px 22px !important;
+    box-sizing: border-box !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    overscroll-behavior: contain;
+  }
+
+  .hex-dialog-scroll > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-fields,
+  .student-access-choices,
+  .student-primary-button,
+  .student-secondary-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+
+/* Very small phones keep THE SAME proportions */
+@media (max-width: 500px) {
+
+  .student-access-dialog,
+  .student-access-dialog.student-access-register {
+    width: min(
+      calc(100vw - 8px),
+      calc((100dvh - 8px) * 1.154700538)
+    ) !important;
+
+    height: auto !important;
+    aspect-ratio: 1.154700538 / 1 !important;
+  }
+
+  .hex-dialog-scroll {
+    top: 11.5% !important;
+    bottom: 11.5% !important;
+    left: 15% !important;
+    right: 15% !important;
+  }
+}
+
+
+/* WE MATH MOBILE HEX SAFE INNER AREA V2 */
+@media (max-width: 799px) {
+
+  .student-access-shell,
+  .student-access-register .student-access-shell {
+    overflow: hidden !important;
+    clip-path: none !important;
+  }
+
+  .hex-dialog-scroll {
+    position: absolute !important;
+
+    top: 10.5% !important;
+    bottom: 10.5% !important;
+
+    left: 17.5% !important;
+    right: 17.5% !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    transform: none !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    box-sizing: border-box !important;
+    padding: 10px 4px 24px !important;
+  }
+
+  .hex-dialog-scroll > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-fields,
+  .student-access-choices {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .student-input-wrap,
+  .student-input-wrap input,
+  .student-input-wrap select,
+  .student-primary-button,
+  .student-secondary-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .student-dialog-close {
+    z-index: 20 !important;
+  }
+}
+
+
+/* WE MATH X ONLY - NO BOX */
+.student-dialog-close,
+.student-access-dialog .student-dialog-close,
+.student-access-shell .student-dialog-close,
+.student-dialog-close.student-icon-button {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+
+  border-radius: 0 !important;
+
+  padding: 0 !important;
+
+  width: 30px !important;
+  height: 30px !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+
+  display: grid !important;
+  place-items: center !important;
+}
+
+.student-dialog-close:hover,
+.student-dialog-close:focus,
+.student-dialog-close:focus-visible,
+.student-dialog-close:active,
+.student-dialog-close.student-icon-button:hover,
+.student-dialog-close.student-icon-button:focus {
+  background: none !important;
+  background-color: transparent !important;
+  background-image: none !important;
+
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.student-dialog-close::before,
+.student-dialog-close::after {
+  display: none !important;
+  content: none !important;
+}
+
+.student-dialog-close svg {
+  display: block !important;
+  width: 18px !important;
+  height: 18px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+
+/* WE MATH PROGRESS HEX ORANGE */
+.progress-summary > div {
+  background: linear-gradient(
+    140deg,
+    #DF9B5F,
+    #F5E7CE
+  ) !important;
+  color: #503E2B !important;
+}
+
+.progress-summary strong,
+.progress-summary span {
+  color: #503E2B !important;
+}

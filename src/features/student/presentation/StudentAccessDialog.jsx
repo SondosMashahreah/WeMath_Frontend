@@ -16,7 +16,7 @@ export default function StudentAccessDialog({ role = "student", mode = "login", 
     subtitle={mode === "choice" ? "رحلتك تبدأ من هنا" : mode === "login" ? "ادخل باسم المستخدم وكلمة المرور." : role === "parent" ? "حساب واحد لمتابعة حتى خمسة أطفال." : "اختر صفك مرة واحدة، لنفتح لك منهجك مباشرة."}>
     {mode === "choice" ? <div className="student-access-choices">
       <button className="student-primary-button" onClick={() => changeMode("login")}>تسجيل الدخول <span aria-hidden="true">←</span></button><button className="student-secondary-button" onClick={() => changeMode("register")}>إنشاء حساب</button>
-    </div> : <><AccountForm key={`${role}-${mode}`} mode={mode} role={role} compact={role === "student" && mode === "register"} onSubmit={submit} onComplete={onComplete} submitLabel={mode === "login" ? "دخول" : "إنشاء حساب"} />
+    </div> : <><AccountForm key={`${role}-${mode}`} mode={mode} role={role} onSubmit={submit} onComplete={onComplete} submitLabel={mode === "login" ? "دخول" : "إنشاء حساب"} />
       <p className="student-switch-access">{mode === "login" ? "ليس لديك حساب؟" : "لديك حساب؟"} <button type="button" onClick={() => changeMode(mode === "login" ? "register" : "login")}>{mode === "login" ? "إنشاء حساب" : "تسجيل الدخول"}</button></p></>}
   </HexDialog>;
 }

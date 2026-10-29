@@ -11,7 +11,7 @@ function acceptSession(session, profile, role, signal) {
 export const accountRepository = {
   async login(values, { role = "student", signal } = {}) {
     const session = await apiRequest("/api/auth/login", { method: "POST", body: values, auth: false, signal });
-    const profile = await apiRequest("/api/auth/me", { token: session.access_token, signal });
+    const profile = session.user || await apiRequest("/api/auth/me", { token: session.access_token, signal });
     return acceptSession(session, profile, role, signal);
   },
   async register(values, { signal } = {}) {
@@ -21,6 +21,11 @@ export const accountRepository = {
   async restore(signal) { return getToken() ? apiRequest("/api/auth/me", { signal }) : null; },
   clearSession() { setToken(null); },
   completeProfile: body => apiRequest("/api/auth/me/profile", { method: "PATCH", body }),
+  async changePassword(body) {
+    const session = await apiRequest("/api/auth/me/password", { method: "PUT", body });
+    setToken(session.access_token);
+    return session.user;
+  },
   async logout() {
     try { if (getToken()) await apiRequest("/api/auth/logout", { method: "POST" }); }
     finally { setToken(null); }

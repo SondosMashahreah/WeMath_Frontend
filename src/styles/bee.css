@@ -1,5 +1,5 @@
 :root {
-  font-family: "Noto Sans Arabic Variable", "Manrope Variable", sans-serif;
+  font-family: "Amiri", "Manrope Variable", serif;
   background: #ded3c8;
   --background: #ded3c8;
   --ink: #2b211b;
@@ -52,6 +52,17 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   height: clamp(17px, calc(var(--cell-size) * .23), 34px);
   flex-shrink: 0; color: var(--icon);
   filter: drop-shadow(0 1px 0 var(--icon-shadow));
+}
+.bee-cell-brand-logo {
+  object-fit: contain;
+  color: initial;
+  filter: none;
+  transform: scale(1.28);
+  transform-origin: center;
+}
+
+.bee-experience[data-layout="desktop"] .bee-cell-front .bee-cell-brand-logo {
+  transform: scale(1.45);
 }
 .bee-cell-label {
   display: flex; flex-direction: column; align-items: center;

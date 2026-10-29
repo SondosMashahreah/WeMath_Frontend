@@ -11,6 +11,7 @@ export function setToken(token) {
 }
 export async function apiRequest(path, { method = "GET", body, signal, token = getToken(), auth = true } = {}) {
   let response;
+  const started = globalThis.performance?.now?.() ?? Date.now();
   try {
     response = await fetch(`${API_BASE_URL}${path}`, { method, signal,
       headers: { ...(body ? { "Content-Type": "application/json" } : {}), ...(auth && token ? { Authorization: `Bearer ${token}` } : {}) },
@@ -19,6 +20,11 @@ export async function apiRequest(path, { method = "GET", body, signal, token = g
   } catch (error) {
     if (error.name === "AbortError") throw error;
     throw new Error("تعذّر الاتصال بالخادم. تحقق من الاتصال ثم حاول مجددًا.", { cause: error });
+  }
+  const elapsed = (globalThis.performance?.now?.() ?? Date.now()) - started;
+  if (import.meta.env?.DEV && (/^\/api\/(auth|parents)/.test(path))) {
+    const serverTiming = response.headers.get("Server-Timing") || "";
+    console.debug(`[WE MATH API] ${method} ${path} ${response.status} ${elapsed.toFixed(1)}ms${serverTiming ? ` · ${serverTiming}` : ""}`);
   }
   if (!response.ok) {
     const payload = await response.json().catch(() => ({}));

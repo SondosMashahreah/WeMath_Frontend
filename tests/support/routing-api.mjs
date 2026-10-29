@@ -4,7 +4,7 @@ const parent = { id: 1, username: 'parent.one', full_name: 'ولي الأمر', 
 const teacher = { id: 20, username: 'teacher.one', full_name: 'المعلّم', role: 'teacher', school: '' };
 export const books = [1, 2].map(grade => ({ id: `book${grade}`, grade, semester: 1, title: `كتاب ${grade}`, period_label: 'الفصل الأول', source_url: `https://example.org/book${grade}.pdf`, units: [{ id: `unit${grade}`, number_in_book: 1, title: 'وحدة الأعداد', lessons: [1, 2].map(i => ({ id: `lesson${grade}-${i}`, position: i, title: `درس ${grade}-${i}` })) }] }));
 const children = [student, { ...student, id: 3, full_name: 'الطالب الثاني', username: 'student.two' }];
-const entries = ['workshops', 'competitions', 'initiatives', 'research', 'teacher_resources'].flatMap(section => Array.from({ length: 8 }, (_, i) => ({ id: `${section}-${i}`, section, category: section === 'teacher_resources' ? 'activities' : section === 'initiatives' ? 'schools' : 'scientific', title: `مادة ${section} ${i}`, body: 'تفاصيل المادة التجريبية', summary: '', is_demo: true, archived: false, event_date: '2026-11-10', source_url: null })));
+const entries = ['workshops', 'competitions', 'initiatives', 'teacher_resources'].flatMap(section => Array.from({ length: 8 }, (_, i) => ({ id: `${section}-${i}`, section, category: section === 'teacher_resources' ? 'activities' : section === 'initiatives' ? 'schools' : 'scientific', title: `مادة ${section} ${i}`, body: 'تفاصيل المادة التجريبية', summary: '', is_demo: true, archived: false, event_date: '2026-11-10', source_url: null })));
 const ok = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 export function installRoutingAPI() {
   const calls = [], documents = new Map(); let capacity = 2;
@@ -20,9 +20,10 @@ export function installRoutingAPI() {
     if (path === '/api/parents/children') return ok({ children: capacity === 2 ? children : Array.from({ length: 5 }, (_, i) => ({ ...student, id: i + 2, full_name: `طفل ${i}` })), max_children: 5 });
     if (/^\/api\/parents\/children\/\d+\/password$/.test(path)) return ok({ ok: true });
     if (/^\/api\/parents\/children\/\d+\/progress$/.test(path)) return ok({ visited: 0, completed: 0, lessons: [] });
+    if (/^\/api\/parents\/children\/\d+\/results$/.test(path)) return ok({ results: [] });
     if (/\/lessons\//.test(path)) {
       if (method === 'PUT') return ok({ status: body.activity === 'completed' ? 'completed' : 'in_progress' });
-      return ok({ book: books[0], resources: ['learn', 'practice', 'game', 'video'].map(id => ({ id, label: id, demo: true, text: 'نشاط تجريبي', question: '1+1', choices: ['1', '2'], answer: '2', url: 'https://example.org/video.mp4' })) });
+      return ok({ book: books[0], resources: ['quiz', 'worksheet', 'film', 'activity', 'game', 'story_video'].map(id => ({ id, label: id, demo: true, text: 'مورد تجريبي', url: ['film', 'story_video'].includes(id) ? 'https://example.org/video.mp4' : null })) });
     }
     if (path === '/api/platform/teachers/me') return ok(teacher);
     if (/\/teachers\/(login|register)$/.test(path)) return ok({ access_token: 'teacher-token', user: teacher });
@@ -43,7 +44,6 @@ export function installRoutingAPI() {
       }
       return ok(doc);
     }
-    if (path === '/api/platform/guest/catalog') return ok({ preview: true, books: books.map(book => ({ ...book, sample: { unit: 'الأعداد', lesson: 'الجمع' } })) });
     if (path === '/api/platform/assistant') return ok({ answer: 'الناتج = 4', steps: [], sources: [], is_demo: true });
     if (/^\/api\/platform\/(entries|teachers\/library)(\/|$)/.test(path)) {
       const privateArea = path.includes('/teachers/library');

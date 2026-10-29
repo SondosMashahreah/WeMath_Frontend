@@ -25,6 +25,10 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
   const { renderer, scene, camera } = rendering;
   const resources = createHivePrimitives();
   const { mesh, material, tube, prism, updatePrism, materials } = resources;
+
+  // Exact WE MATH yellow.
+  // MeshBasicMaterial + toneMapped=false keeps #FFD800 visually unchanged
+  // by scene lights / environment / ACES Filmic tone mapping.
   const honey = material(BEE_THEME.honey), cream = material(BEE_THEME.cream);
   const gold = material(BEE_THEME.honeyLight, { metalness: 0.55, roughness: 0.24 });
   function text(value, size, parent, m = cream, depth = 0.025) {
@@ -44,31 +48,54 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
   // Opening: individual solid letters. W and M are articulated solid strokes.
   const word = new THREE.Group();
   world.add(word);
+
   const wordFront = material(BEE_THEME.honey);
   const wordSide = material(BEE_THEME.edge);
   const strokeMaterial = material(BEE_THEME.honey, { transparent: true });
   const letterMaterials = [wordFront, wordSide];
+
   // A narrow highlight travels across the same 3D letters, after their entrance.
   const shine = { value: 0 }, shineX = { value: -5 };
+
   for (const m of [wordFront, wordSide, strokeMaterial]) {
     m.onBeforeCompile = shader => {
       shader.uniforms.uShine = shine;
       shader.uniforms.uShineX = shineX;
-      shader.vertexShader = "varying vec3 vWordPosition;\n" + shader.vertexShader.replace(
-        "#include <begin_vertex>",
-        "#include <begin_vertex>\nvWordPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;",
-      );
-      shader.fragmentShader = "uniform float uShine;\nuniform float uShineX;\nvarying vec3 vWordPosition;\n" + shader.fragmentShader.replace(
-        "#include <emissivemap_fragment>",
-        `#include <emissivemap_fragment>
-        float offset = (vWordPosition.x + vWordPosition.y * 0.38 - uShineX) * 2.8;
-        float band = exp(-offset * offset) * uShine;
-        diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0, 0.95, 0.80), band * 0.8);
-        totalEmissiveRadiance += vec3(1.0, 0.86, 0.57) * band * 0.55;`,
-      );
+
+      shader.vertexShader =
+        "varying vec3 vWordPosition;\n" +
+        shader.vertexShader.replace(
+          "#include <begin_vertex>",
+          "#include <begin_vertex>\nvWordPosition = (modelMatrix * vec4(transformed, 1.0)).xyz;"
+        );
+
+      shader.fragmentShader =
+        "uniform float uShine;\nuniform float uShineX;\nvarying vec3 vWordPosition;\n" +
+        shader.fragmentShader.replace(
+          "#include <emissivemap_fragment>",
+          `#include <emissivemap_fragment>
+          float offset =
+            (vWordPosition.x + vWordPosition.y * 0.38 - uShineX) * 2.8;
+
+          float band =
+            exp(-offset * offset) * uShine;
+
+          diffuseColor.rgb =
+            mix(
+              diffuseColor.rgb,
+              vec3(1.0, 0.95, 0.80),
+              band * 0.8
+            );
+
+          totalEmissiveRadiance +=
+            vec3(1.0, 0.86, 0.57) * band * 0.55;`
+        );
     };
-    m.customProgramCacheKey = () => "we-math-word-shine";
+
+    m.customProgramCacheKey = () =>
+      "we-math-word-shine";
   }
+
   const wordLetters = [];
   const glyphSpecs = ["W", "E", " ", "M", "A", "T", "H"];
   let wordWidth = 0;
@@ -103,7 +130,10 @@ export function createBeeScene({ canvas, host, hitTargets, onStage, onFinish, on
     word.rotation.x = 0.35 * (1 - between(clock.seconds, 0, 1.05));
     shine.value = between(clock.seconds, 1.08, 1.22) * (1 - between(clock.seconds, 1.98, 2.15));
     shineX.value = lerp(-4.5, 4.5, between(clock.seconds, 1.08, 2.15));
-    const focus = between(t, 1.65, 3.3), morph = between(t, 3.25, 5.2), vanish = 1 - between(t, 5.35, 6.1);
+    const delayedT = Math.max(0, t - 1);
+    const focus = between(delayedT, 1.65, 3.05);
+    const morph = between(delayedT, 3.18, 5.2);
+    const vanish = 1 - between(delayedT, 5.35, 6.1);
     strokeMaterial.opacity = vanish;
     for (const glyph of wordLetters) {
       if (glyph.char !== "W" && glyph.char !== "M") {
@@ -242,14 +272,45 @@ function renderProof(t) {
 
   const emblem = new THREE.Group();
   world.add(emblem);
-  const face = mesh(prism(medallionOutline(0), 0.32, 0.045), honey, emblem);
+
+  const face = mesh(
+    prism(medallionOutline(0), 0.32, 0.045),
+    honey,
+    emblem
+  );
+
   const label = new THREE.Group();
   emblem.add(label);
-  const labelTop = text("WE", 0.66, label, cream, 0.06);
+
+  const labelTop = text(
+    "WE",
+    0.66,
+    label,
+    cream,
+    0.06
+  );
   labelTop.position.set(0, 0.48, 0.22);
-  const labelBottom = text("MATH", 0.66, label, cream, 0.06);
+
+  const labelBottom = text(
+    "MATH",
+    0.66,
+    label,
+    cream,
+    0.06
+  );
   labelBottom.position.set(0, -0.38, 0.22);
-  const rim = tube(medallionOutline(1, DISC_RADIUS * 0.96, 60).map(v => [v.x, v.y, 0.21]), 0.012, gold, emblem, true);
+
+  const rim = tube(
+    medallionOutline(
+      1,
+      DISC_RADIUS * 0.96,
+      60
+    ).map(v => [v.x, v.y, 0.21]),
+    0.012,
+    gold,
+    emblem,
+    true
+  );
 
   const smallHive = createSmallHive({ world, mesh, prism, tube, material, gold });
   const { buttons } = smallHive;

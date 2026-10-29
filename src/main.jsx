@@ -1,7 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource-variable/manrope";
-import "@fontsource-variable/noto-sans-arabic";
+import "@fontsource/amiri/400.css";
+import "@fontsource/amiri/700.css";
 import "./index.css";
 import App from "./App.jsx";
 import { createBrowserRouter } from "react-router-dom";

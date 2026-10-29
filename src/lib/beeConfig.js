@@ -4,61 +4,55 @@ export const HIVE_ITEMS = [
     id: "assistant", label: "المساعد الذكي",
     lines: ["المساعد", "الذكي"],
     desktop: { x: -1.88, y: 2.32 },
-    mobile: { x: -1.6, y: 2.33 },
+    mobile: { x: -1.90, y: 2.15 },
   },
   {
     id: "workshops", label: "الورشات",
     lines: ["الورشات"],
     desktop: { x: -3.25, y: 0.83 },
-    mobile: { x: -2.85, y: 0.92 },
+    mobile: { x: -3.00, y: 0.35 },
   },
   {
     id: "students", label: "الطلاب",
     lines: ["الطلاب"],
     desktop: { x: -3.25, y: -0.83 },
-    mobile: { x: -2.85, y: -0.92 },
+    mobile: { x: -2.35, y: -1.75 },
   },
   {
     id: "teachers", label: "المعلمين",
     lines: ["المعلمين"],
     desktop: { x: -1.88, y: -2.32 },
-    mobile: { x: -1.6, y: -2.33 },
+    mobile: { x: -1.15, y: -3.45 },
   },
   {
     id: "parents", label: "الاهل",
     lines: ["الاهل"],
     desktop: { x: 1.88, y: 2.32 },
-    mobile: { x: 1.6, y: 2.33 },
-  },
-  {
-    id: "guest", label: "ضيف",
-    lines: ["ضيف"],
-    desktop: { x: 3.25, y: 0.83 },
-    mobile: { x: 2.85, y: 0.92 },
+    mobile: { x: 1.90, y: 2.15 },
   },
   {
     id: "competitions", label: "المسابقات",
     lines: ["المسابقات"],
     desktop: { x: 3.25, y: -0.83 },
-    mobile: { x: 2.85, y: -0.92 },
+    mobile: { x: 2.35, y: -1.75 },
   },
   {
     id: "initiatives", label: "المبادرات وقصص النجاح",
     lines: ["المبادرات", "وقصص النجاح"],
-    desktop: { x: 1.88, y: -2.32 },
-    mobile: { x: 1.6, y: -2.33 },
+    desktop: { x: 3.25, y: 0.83 },
+    mobile: { x: 3.00, y: 0.35 },
   },
   {
-    id: "research", label: "الابحاث والدراسات",
-    lines: ["الابحاث", "والدراسات"],
+    id: "research", label: "الأبحاث والدراسات (PARP)",
+    lines: ["الأبحاث والدراسات", "(PARP)"],
     desktop: { x: -4.98, y: 0 },
-    mobile: { x: 0, y: 4 },
+    mobile: { x: 0.00, y: 3.55 },
   },
   {
     id: "steam", label: "WE STEAM",
     lines: ["WE STEAM"],
     desktop: { x: 4.98, y: 0 },
-    mobile: { x: 0, y: -4 },
+    mobile: { x: 1.15, y: -3.45 },
   },
 ];
 
@@ -72,7 +66,7 @@ export const BEE_THEME = {
   icon: "#d54b1d",
 };
 
-// Both sector colors live here; the completed circle uses BEE_THEME.honey.
+// Mathematics-book yellow + beige. Official PARP/STEAM logos keep their own colors.
 export const SECTOR_COLORS = ["#F72217", "#d8b578"];
 
 // Measured from the supplied 1336 × 740 desktop sketch.
@@ -88,9 +82,8 @@ export const DESKTOP_HIVE = {
     students: { x: 853.5, y: 141, width: 219, height: 204 },
     teachers: { x: 848, y: 358.5, width: 232, height: 205 },
     parents: { x: 854, y: 566.5, width: 224, height: 199 },
-    guest: { x: 1031.5, y: 251, width: 227, height: 204 },
+    initiatives: { x: 1031.5, y: 251, width: 227, height: 204 },
     competitions: { x: 1040, y: 461, width: 230, height: 198 },
-    initiatives: { x: 1208, y: 140.5, width: 224, height: 205 },
     research: { x: 1215, y: 352, width: 228, height: 208 },
     steam: { x: 1217.5, y: 564, width: 213, height: 202 },
   },
@@ -98,8 +91,9 @@ export const DESKTOP_HIVE = {
 export const DESKTOP_FLIP_DURATION = 1;
 
 // Seconds, rather than scroll positions. Change INTRO_DURATION to retime everything.
-export const INTRO_DURATION = 14;
+export const INTRO_DURATION = 7;
 export const ENTRANCE_DELAY = 0.5;
+export const INTRO_WORD_HOLD = 1;
 // Timeline coordinates stay fixed; INTRO_DURATION changes the playback speed.
 export const STORY_DURATION = 16.8 + ENTRANCE_DELAY;
 export const DISC_RADIUS = 1.95;
@@ -150,8 +144,8 @@ export function hiveLayout(width, height, finePointer = true) {
   const portrait = isPortraitLayout(width, height);
   return {
     mode: portrait ? "mobile" : "desktop",
-    tileRadius: portrait ? 0.99 : 0.82,
-    centerScale: portrait ? 0.77 : 1,
+    tileRadius: portrait ? 0.82 : 0.82,
+    centerScale: portrait ? 0.72 : 1,
     desktopMenu: !portrait && finePointer,
     desktop: desktopHiveLayout(width, height),
   };

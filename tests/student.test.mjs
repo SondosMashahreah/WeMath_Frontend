@@ -26,7 +26,7 @@ test("every grade 1–12 leads to exactly two semesters, then units and lessons"
         const selected = selectJourneyItem(unitState, lessons.items[0].id, curriculum);
         assert.equal(selected.lesson, lessons.items[0].id);
         assert.equal(presentJourney(selected, curriculum).title, lessons.items[0].label);
-        assert(presentJourney(selected, curriculum).items.some(item => item.id === "@learn"));
+        assert(presentJourney(selected, curriculum).items.some(item => item.id === "@quiz"));
       }
     }
   }

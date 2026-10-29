@@ -8,7 +8,8 @@ function bookLines(book) {
 export function createCurriculumRepository(books) {
   const byId = new Map(books.map(book => [book.id, book]));
   return {
-    listBooks(grade) { return books.filter(book => book.grade === Number(grade)).map(book => ({ id: book.id, label: bookLines(book).join(" — "), lines: bookLines(book), semester: book.semester, classificationLabel: book.classification_label, sourceUrl: safeExternalUrl(book.source_url), title: book.title })); },
+    listTracks(grade) { return [...new Set(books.filter(book => book.grade === Number(grade)).map(book => book.classification_label).filter(Boolean))].sort((a, b) => a.localeCompare(b, "ar")); },
+    listBooks(grade, track = null) { return books.filter(book => book.grade === Number(grade) && (!track || !book.classification_label || book.classification_label === track)).map(book => ({ id: book.id, label: bookLines(book).join(" — "), lines: bookLines(book), semester: book.semester, classificationLabel: book.classification_label, sourceUrl: safeExternalUrl(book.source_url), title: book.title })); },
     getBook(bookId) { const book = byId.get(String(bookId)); return book ? { ...book, sourceUrl: safeExternalUrl(book.source_url) } : null; },
     listUnits(grade, bookId) {
       const book = byId.get(String(bookId));

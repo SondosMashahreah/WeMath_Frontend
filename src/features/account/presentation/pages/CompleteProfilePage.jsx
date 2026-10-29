@@ -9,6 +9,7 @@ export default function CompleteProfilePage() {
   const { profile, accept } = useAccount(), [params] = useSearchParams(), { go } = usePageNavigation();
   const requested = safeReturnPath(params.get("next"), "/student");
   const next = requested.startsWith("/student/profile") ? "/student" : requested;
-  if (profile.grade) return <Navigate replace to={next} />;
-  return <HexDialog wide title="أكمل صفك الدراسي" subtitle="حسابك موجود مسبقًا؛ احفظ صفك مرة واحدة لتدخل إليه مباشرة." onClose={() => go("/")}><AccountForm mode="profile" initialValues={profile} onSubmit={accountRepository.completeProfile} onComplete={identity => { accept(identity); go(next, { replace: true }); }} submitLabel="حفظ الصف والمتابعة" /></HexDialog>;
+  const complete = profile.grade && (![11, 12].includes(Number(profile.grade)) || profile.track);
+  if (complete) return <Navigate replace to={next} />;
+  return <HexDialog wide title="أكمل بياناتك الدراسية" subtitle="احفظ الصف والمسار عند الحاجة لتدخل إلى كتبك الصحيحة مباشرة." onClose={() => go("/")}><AccountForm mode="profile" initialValues={profile} onSubmit={accountRepository.completeProfile} onComplete={identity => { accept(identity); go(next, { replace: true }); }} submitLabel="حفظ الصف والمتابعة" /></HexDialog>;
 }

@@ -2,6 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { BEE_THEME, HIVE_ITEMS } from "../lib/beeConfig.js";
 import HiveIcon from "./HiveIcon.jsx";
 
+const PARP_URL = import.meta.env.VITE_PARP_URL || "http://localhost:5174";
+const STEAM_URL = import.meta.env.VITE_STEAM_URL || "https://steam.ps/";
+const openExternal = url => window.open(url, "_blank", "noopener,noreferrer");
+
 export default function BeeExperience({ active = true, modalOpen = false, skipIntro = false, onStudentRequest, onParentRequest, onSectionRequest }) {
   const host = useRef(null), canvas = useRef(null), engine = useRef(null);
   const hitTargets = useRef({}), centerButton = useRef(null);
@@ -86,7 +90,7 @@ export default function BeeExperience({ active = true, modalOpen = false, skipIn
             className={`bee-hit bee-cell${item.lines.length > 1 ? " bee-cell-multiline" : ""}`}
             data-cell={item.id} data-hover-id={item.id} aria-label={item.label}
             onPointerEnter={hover} onPointerLeave={clearHover} onFocus={hover} onBlur={clearHover}
-            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => window.open("https://steam.ps/", "_blank", "noopener,noreferrer") : () => onSectionRequest?.(item.id)}
+            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => openExternal(STEAM_URL) : item.id === "research" ? () => openExternal(PARP_URL) : () => onSectionRequest?.(item.id)}
           >
             <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
               <HiveIcon name={item.id} />

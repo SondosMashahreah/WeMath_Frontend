@@ -1,12 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa6";
 import { accessFields, accessPayload, validateAccess } from "../../student/domain/accessValidation.js";
+import { useCurriculum } from "../../student/application/curriculumContext.js";
 export default function AccountForm({ mode, role = "student", initialValues = {}, onSubmit, onComplete, submitLabel, compact = false }) {
   const [values, setValues] = useState(initialValues), [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false), [pending, setPending] = useState(false), [failure, setFailure] = useState("");
-  const form = useRef(null), mounted = useRef(true);
+  const form = useRef(null), mounted = useRef(true), curriculum = useCurriculum();
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
-  const fields = accessFields(mode, role).filter(field => !compact || field.required);
+  const trackOptions = useMemo(() => curriculum?.repository?.listTracks?.(Number(values.grade)) || [], [curriculum?.repository, values.grade]);
+  const fields = accessFields(mode, role).filter(field => !compact || field.required).filter(field => field.name !== "track" || [11, 12].includes(Number(values.grade)));
   async function submit(event) {
     event.preventDefault(); if (pending) return;
     const next = validateAccess(mode, values, role); setErrors(next); setFailure("");
@@ -21,8 +23,10 @@ export default function AccountForm({ mode, role = "student", initialValues = {}
     <fieldset disabled={pending} className="account-fieldset"><div className="student-fields">{fields.map(field => <div className="student-field" key={field.name}>
       <label htmlFor={`account-${field.name}`}>{field.label}{!field.required && <span className="optional-label"> · اختياري</span>}</label>
       <div className="student-input-wrap">
-        {field.type === "grade" ? <select id={`account-${field.name}`} name={field.name} required value={values.grade || ""} aria-invalid={Boolean(errors.grade)} aria-describedby={errors.grade ? "grade-error" : undefined} onChange={event => update("grade", event.target.value)}>
+        {field.type === "grade" ? <select id={`account-${field.name}`} name={field.name} required value={values.grade || ""} aria-invalid={Boolean(errors.grade)} aria-describedby={errors.grade ? "grade-error" : undefined} onChange={event => { update("grade", event.target.value); update("track", ""); }}>
           <option value="">اختر الصف</option>{Array.from({ length: 12 }, (_, i) => <option key={i + 1} value={i + 1}>الصف {i + 1}</option>)}
+        </select> : field.type === "track" ? <select id={`account-${field.name}`} name={field.name} required value={values.track || ""} aria-invalid={Boolean(errors.track)} onChange={event => update("track", event.target.value)}>
+          <option value="">اختر المسار</option>{trackOptions.map(track => <option key={track} value={track}>{track}</option>)}
         </select> : <input id={`account-${field.name}`} name={field.name} type={field.type === "password" && showPassword ? "text" : field.type || "text"}
           inputMode={field.inputMode} dir={field.dir || "rtl"} autoComplete={field.autocomplete || "off"} maxLength={field.maxLength || 150}
           required={field.required} value={values[field.name] || ""} aria-invalid={Boolean(errors[field.name])}

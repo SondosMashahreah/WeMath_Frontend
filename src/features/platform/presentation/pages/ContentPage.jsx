@@ -11,7 +11,39 @@ export default function ContentPage({ section, base = `/${section}`, home = "/" 
   const { category, entryId, filters, offset, valid, list, detail, privateArea, update } = useContentRoute(section);
   const { go, close, location } = usePageNavigation();
   if (!valid) return <RouteFeedback back={base} />;
-  if (!category) return <HivePage title={TITLES[section]} items={Object.entries(CATEGORIES[section]).map(([id, title]) => hiveItem(id, title))} onSelect={id => go(contentPath(base, id))} onBack={() => go(home)} />;
+
+if (!category) {
+  const items = Object.entries(CATEGORIES[section]).map(([id, title]) =>
+    hiveItem(id, title)
+  );
+
+  return (
+    <HivePage
+      title={TITLES[section]}
+      items={items}
+      onSelect={
+        section === "initiatives" || section === "workshops"
+          ? () => {}
+          : id => go(contentPath(base, id))
+      }
+      onBack={() => go(home)}
+    />
+  );
+}
+
+  if (section === "competitions") {
+    const competitionPlaceholders = [
+      hiveItem("$archive-placeholder", "الأرشيف"),
+      hiveItem("$calendar-placeholder", "التقويم"),
+    ];
+    return <HivePage
+      title={CATEGORIES[section][category]}
+      hint="خيارات المسابقات"
+      items={competitionPlaceholders}
+      onSelect={() => {}}
+      onBack={() => go(base)}
+    />;
+  }
   const listURL = contentPath(base, category) + location.search;
   if (!list.data) return <LoadDialog state={list} onClose={() => go(base)} />;
   if (entryId && !detail.data) return <LoadDialog state={detail} onClose={() => close(listURL)} />;
@@ -30,6 +62,6 @@ export default function ContentPage({ section, base = `/${section}`, home = "/" 
     <p className="platform-status" role="status">{rows.length ? `${offset + 1}–${offset + rows.length} من ${list.data.total}` : "لا توجد نتائج لهذا الاختيار"}{filters.month && <button onClick={() => update({ panel: "calendar" })}>تغيير الشهر</button>}</p>
     {entryId && <EntryDetail key={entryId} entry={detail.data} onClose={() => close(listURL)} />}
     {filters.panel === "search" && <PlatformDialog title="البحث في المحتوى" onClose={() => update({ panel: null }, true)}><form className="platform-form" onSubmit={event => { event.preventDefault(); update({ q: new FormData(event.currentTarget).get("q").trim(), page: 1, panel: null }, true); }}><label>كلمة البحث<input name="q" maxLength={100} defaultValue={filters.q} autoFocus /></label><button className="student-primary-button">بحث</button><button className="student-secondary-button" type="button" onClick={() => update({ q: null, page: 1, panel: null }, true)}>مسح البحث</button></form></PlatformDialog>}
-    {filters.panel === "calendar" && section === "competitions" && <PlatformDialog title="تقويم المسابقات" subtitle="تواريخ النماذج الحالية تجريبية فقط." onClose={() => update({ panel: null }, true)}><form className="platform-form" onSubmit={event => { event.preventDefault(); update({ month: new FormData(event.currentTarget).get("month"), page: 1, panel: null }, true); }}><label>الشهر<input type="month" name="month" min="1900-01" max="2199-12" required defaultValue={filters.month || new Date().toISOString().slice(0, 7)} /></label><button className="student-primary-button">عرض المواعيد</button></form></PlatformDialog>}
+    {filters.panel === "calendar" && section === "competitions" && <PlatformDialog title="تقويم المسابقات" subtitle="اختر شهرًا لعرض المسابقات المسجلة فيه." onClose={() => update({ panel: null }, true)}><form className="platform-form" onSubmit={event => { event.preventDefault(); update({ month: new FormData(event.currentTarget).get("month"), page: 1, panel: null }, true); }}><label>الشهر<input type="month" name="month" min="1900-01" max="2199-12" required defaultValue={filters.month || new Date().toISOString().slice(0, 7)} /></label><button className="student-primary-button">عرض المواعيد</button></form></PlatformDialog>}
   </HivePage>;
 }

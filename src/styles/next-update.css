@@ -1,0 +1,42 @@
+/* Final responsive surfaces for the 2026-10 platform update. */
+.student-access-dialog {
+  overflow: hidden;
+  max-height: calc(100dvh - 16px);
+  scrollbar-width: none;
+}
+.student-access-dialog::-webkit-scrollbar,
+.student-access-shell::-webkit-scrollbar { display: none; }
+.student-access-shell {
+  min-height: 0;
+  max-height: calc(100dvh - 16px);
+  overflow: auto;
+  scrollbar-width: none;
+  padding-block: clamp(54px, 7vh, 78px);
+}
+.student-access-register { width: min(920px, calc(100vw - 20px)); }
+.student-access-register .student-access-shell { padding-inline: clamp(11%, 14vw, 18%); }
+.student-access-register .student-fields { gap: 10px 16px; margin-bottom: 16px; }
+.student-access-register .student-field label { margin-bottom: 4px; }
+.student-access-register .student-input-wrap :is(input,select) { min-height: 42px; padding-block: 7px; }
+.platform-dialog .student-access-shell { min-height: 0; }
+
+@media (max-height: 720px) and (min-width: 600px) {
+  .student-access-shell { padding-block: 44px; }
+  .student-access-heading p { margin-bottom: 12px; }
+  .student-access-register .student-fields { gap: 7px 14px; }
+  .student-access-register .student-input-wrap :is(input,select) { min-height: 38px; }
+  .student-dialog-close { top: 44px; }
+}
+
+@media (max-width: 599px) {
+  .student-access-dialog { width: calc(100vw - 12px); max-width: none; }
+  .student-access-shell {
+    max-height: calc(100dvh - 12px);
+    padding: 56px 10% 44px;
+  }
+  .student-access-shell::before {
+    clip-path: polygon(12% 0,88% 0,100% 12%,100% 88%,88% 100%,12% 100%,0 88%,0 12%);
+  }
+  .student-access-register .student-fields { grid-template-columns: 1fr; }
+  .student-dialog-close { top: 18px; left: 8%; }
+}

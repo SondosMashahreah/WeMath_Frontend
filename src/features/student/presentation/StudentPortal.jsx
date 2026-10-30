@@ -65,8 +65,8 @@ export default function StudentPortal({ curriculum, profile, onHome, onLogout, r
     window.addEventListener("keydown", onKey); return () => window.removeEventListener("keydown", onKey);
   }, [back]);
   const displayView = useMemo(() => ({ ...view, items: [ ...view.items.filter(item => !readOnlyChildId || item.id !== "@completed"),
-    ...(!readOnlyChildId ? [{ id: "@account", label: "حسابي", lines: ["حسابي"], kind: "account" }] : []),
-  ] }), [view, state.semester, readOnlyChildId]);
+    ...(!readOnlyChildId && !state.lesson ? [{ id: "@account", label: "حسابي", lines: ["حسابي"], kind: "account" }] : []),
+  ] }), [view, state.semester, readOnlyChildId, state.lesson]);
 function pick(id) {
   if (!id.startsWith("@")) return select(id);
 

@@ -32,16 +32,10 @@ function CellContent({ item, back = false, mobile = false }) {
   let faceLines;
 
   if (mobile) {
-    if (item.kind === "unit") {
-      faceLines = [
-        `?????? ${item.number}`,
-        item.label,
-      ];
-    } else if (item.kind === "lesson") {
-      faceLines = [
-        `????? ${item.number}`,
-        item.label,
-      ];
+    if (item.kind === "unit" || item.kind === "lesson") {
+      const numberLine = (item.frontLines || []).join(" ");
+      const titleLines = item.backLines || [];
+      faceLines = [numberLine, ...titleLines];
     } else if (ResourceIcon) {
       faceLines = [item.label];
     } else {

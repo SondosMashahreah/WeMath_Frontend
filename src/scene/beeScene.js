@@ -197,17 +197,17 @@ function renderProof(t) {
   // 1) scatter
   const scatterOut = between(t, 5.05, 5.8);
 
-  // 2) الرجوع للمستطيل
+  // 2) ط§ظ„ط±ط¬ظˆط¹ ظ„ظ„ظ…ط³طھط·ظٹظ„
   const settle = between(t, 5.8, 7.3);
 
-  // 3) بعد ما يكتمل المستطيل نرجع للحركة الأصلية
+  // 3) ط¨ط¹ط¯ ظ…ط§ ظٹظƒطھظ…ظ„ ط§ظ„ظ…ط³طھط·ظٹظ„ ظ†ط±ط¬ط¹ ظ„ظ„ط­ط±ظƒط© ط§ظ„ط£طµظ„ظٹط©
   const continueOriginal = between(t, 7.3, 8.0);
 
-  // p = 0.38 هو وضع المستطيل المرتب في geometry.js
+  // p = 0.38 ظ‡ظˆ ظˆط¶ط¹ ط§ظ„ظ…ط³طھط·ظٹظ„ ط§ظ„ظ…ط±طھط¨ ظپظٹ geometry.js
   const rectangleP = 0.38;
 
-  // خلال التناثر والرجوع: نثبت الشكل على المستطيل
-  // وبعدها نسمح للأنيميشن الأصلي يكمل
+  // ط®ظ„ط§ظ„ ط§ظ„طھظ†ط§ط«ط± ظˆط§ظ„ط±ط¬ظˆط¹: ظ†ط«ط¨طھ ط§ظ„ط´ظƒظ„ ط¹ظ„ظ‰ ط§ظ„ظ…ط³طھط·ظٹظ„
+  // ظˆط¨ط¹ط¯ظ‡ط§ ظ†ط³ظ…ط­ ظ„ظ„ط£ظ†ظٹظ…ظٹط´ظ† ط§ظ„ط£طµظ„ظٹ ظٹظƒظ…ظ„
   const p =
     t < 7.3
       ? rectangleP
@@ -317,9 +317,75 @@ function renderProof(t) {
 
   const { placeHit, placeFace } = createHiveProjection({ camera, hitTargets, getSize: () => ({ width, height }) });
 
+  // Once the menu has stayed open for 10 seconds, gently showcase the cells
+  // one after another. Hover/focus always wins, so normal interaction is unchanged.
+  const AUTO_FLIP_DELAY = 1.5;
+  const AUTO_FLIP_INTERVAL = 14;
+  const AUTO_FLIP_STAGGER = 0.3;
+  const AUTO_FLIP_VISIBLE_HOLD = 4;
+  let autoFlipStartedAt = Number.POSITIVE_INFINITY;
+
+function getAutoFlipRank(button) {
+  const ordered = [...buttons].sort((a, b) => {
+    const aPos = homeCellPosition(a.item);
+    const bPos = homeCellPosition(b.item);
+
+    // Laptop + phone landscape: left -> right
+    if (layout.desktopMenu) {
+      return aPos.x - bPos.x || bPos.y - aPos.y;
+    }
+
+    // Phone portrait: top -> bottom
+    return bPos.y - aPos.y || aPos.x - bPos.x;
+  });
+
+  return ordered.findIndex(
+    candidate => candidate.item.id === button.item.id
+  );
+}
+
   function updateFlip(button) {
-    const target = layout.desktopMenu && opened && hovered === button.item.id ? 1 : 0;
-    if (!layout.desktopMenu || reduced) {
+    const now = performance.now() / 1000;
+    const desktopHover = layout.desktopMenu && hovered === button.item.id;
+    const autoBlockedByHover = layout.desktopMenu && Boolean(hovered);
+    const autoEnabled = opened && !reduced && active;
+    if (!autoEnabled) autoFlipStartedAt = Number.POSITIVE_INFINITY;
+    else if (!Number.isFinite(autoFlipStartedAt)) autoFlipStartedAt = now + AUTO_FLIP_DELAY;
+
+    const cycle = autoEnabled && now >= autoFlipStartedAt
+      ? (now - autoFlipStartedAt) % AUTO_FLIP_INTERVAL
+      : -1;
+    
+      const count = buttons.length;
+
+const forwardRank = getAutoFlipRank(button);
+const reverseRank = count - 1 - forwardRank;
+
+// أول موجة
+const forwardStart =
+  forwardRank * AUTO_FLIP_STAGGER;
+
+// آخر خلية تخلص قلب + مدة بقاء الوجه الخلفي
+const reverseBase =
+  (count - 1) * AUTO_FLIP_STAGGER +
+  DESKTOP_FLIP_DURATION +
+  AUTO_FLIP_VISIBLE_HOLD;
+
+// موجة الرجوع بالعكس
+const reverseStart =
+  reverseBase +
+  reverseRank * AUTO_FLIP_STAGGER;
+
+const autoTarget =
+  cycle >= forwardStart &&
+  cycle < reverseStart;
+  
+    const target = opened
+      && (desktopHover || (!autoBlockedByHover && autoTarget))
+      ? 1
+      : 0;
+
+    if (reduced) {
       gsap.killTweensOf(button.flip);
       button.flip.value = target;
       button.flipTarget = target;
@@ -374,6 +440,118 @@ function renderProof(t) {
   host.addEventListener("pointermove", pointerMove, { passive: true });
   host.addEventListener("pointerleave", pointerLeave);
 
+  // ------------------------------------------------------------
+  // HOME HIVE LAYOUT
+  // Laptop: regular 2-3-3-3 honeycomb.
+  // Mobile: 11-cell ring around the large center hexagon.
+  // ------------------------------------------------------------
+
+const MOBILE_HOME_POSITIONS = {
+  // top
+  research:     { x:  0.00, y:  3.78 },
+
+  // upper arc
+  assistant:    { x: -1.75, y:  3.02 },
+  parents:      { x:  1.75, y:  3.02 },
+
+  // mid-upper sides
+  workshops:    { x: -3.00, y:  1.62 },
+  initiatives:  { x:  3.00, y:  1.62 },
+
+  // mid-lower sides
+  students:     { x: -3.00, y: -0.42 },
+  competitions: { x:  3.00, y: -0.42 },
+
+  // lower arc
+  teachers:     { x: -2.18, y: -2.18 },
+  museum:       { x:  2.18, y: -2.18 },
+
+  // bottom pair
+  alquds:       { x: -0.99, y: -3.80 },
+  steam:        { x:  0.99, y: -3.80 },
+};
+
+const DESKTOP_HOME_SLOTS = {
+  // العمود الأول: 2
+  assistant:    { column: 0, row:  0.5 },
+  workshops:    { column: 0, row: -0.5 },
+
+  // العمود الثاني: 3
+  students:     { column: 1, row:  1 },
+  teachers:     { column: 1, row:  0 },
+  parents:      { column: 1, row: -1 },
+
+  // العمود الثالث: 3 - منخفض نصف صف
+  initiatives:  { column: 2, row:  0.5 },
+  competitions: { column: 2, row: -0.5 },
+  museum:       { column: 2, row: -1.5 },
+
+  // العمود الرابع: 3 - يرجع مثل العمود الثاني
+  alquds:       { column: 3, row:  1 },
+  research:     { column: 3, row:  0 },
+  steam:        { column: 3, row: -1 },
+};
+
+  function homeCellPosition(item) {
+    // Laptop / desktop honeycomb
+    if (layout.desktopMenu) {
+      const referenceCell =
+        layout.desktop.cells.students ||
+        Object.values(layout.desktop.cells)[0];
+
+      const slot = DESKTOP_HOME_SLOTS[item.id];
+
+      if (!slot || !referenceCell) {
+        return layout.desktop.cells[item.id];
+      }
+
+      // One common radius for every small hexagon.
+      const cellScale = Math.min(
+        referenceCell.scale.x,
+        referenceCell.scale.y
+      );
+
+      // One common spacing factor.
+      // Change ONLY this number if you want more/less space.
+const gapFactor = 1.08;
+
+// شبكة hex حقيقية:
+// المسافة بين أي خليتين متجاورتين متساوية بكل الاتجاهات.
+const stepX = 1.5 * cellScale * gapFactor;
+const stepY = Math.sqrt(3) * cellScale * gapFactor;
+
+// نرفع المجموعة شوي حتى صف المتحف السفلي يظل داخل الشاشة.
+const baseY =
+  layout.desktop.center.y +
+  stepY * 0.20;
+
+const centerHalfWidth =
+  DISC_RADIUS * layout.desktop.centerScale.x;
+
+const firstColumnX =
+  layout.desktop.center.x +
+  centerHalfWidth +
+  cellScale * 1.45 +
+  1;
+
+return {
+  x: firstColumnX + slot.column * stepX,
+  y: baseY + slot.row * stepY,
+
+  scale: {
+    x: cellScale,
+    y: cellScale,
+  },
+};
+    }
+
+    // Mobile ring
+    if (layout.mode === "mobile") {
+      return MOBILE_HOME_POSITIONS[item.id] || item.mobile;
+    }
+
+    return item.desktop;
+  }
   function frame(now) {
     if (disposed || !active) return;
     const dt = Math.min((now - (lastTime || now)) / 1000, 0.05); lastTime = now;
@@ -407,7 +585,7 @@ function renderProof(t) {
         ? between(expansion.value, 0.22 + i * 0.015, 0.82 + i * 0.015)
         : between(expansion.value, i * 0.022, 0.78 + i * 0.022);
       button.progress = progress;
-      const position = layout.desktopMenu ? layout.desktop.cells[item.id] : item[layout.mode];
+      const position = homeCellPosition(item);
       group.visible = progress > 0.001;
       group.position.set(position.x * progress, position.y * progress, -0.5 * (1 - progress));
       if (layout.desktopMenu) {
@@ -429,7 +607,7 @@ function renderProof(t) {
         const { item, group, progress, front, back, flip } = button;
         const hit = placeHit(item.id, group, 1, 0.16, progress);
         if (hit) smallHive.syncContrast(button, hit.element);
-        if (hit && layout.desktopMenu) {
+        if (hit) {
           placeFace(hit.element.querySelector(".bee-cell-front"), front, hit);
           placeFace(hit.element.querySelector(".bee-cell-back"), back, hit);
           hit.element.dataset.face = flip.value > 0.5 ? "label" : "icon";

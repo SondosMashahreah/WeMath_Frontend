@@ -26,36 +26,15 @@ function fitTextClass(value = "") {
   return "student-text-sm";
 }
 
-function CellContent({ item, back = false, mobile = false }) {
+function CellContent({ item, back = false }) {
   const ResourceIcon = LESSON_RESOURCE_ICONS[item.id];
-
-  let faceLines;
-
-  if (mobile) {
-    if (item.kind === "unit" || item.kind === "lesson") {
-      const numberLine = (item.frontLines || []).join(" ");
-      const titleLines = item.backLines || [];
-      faceLines = [numberLine, ...titleLines];
-    } else if (ResourceIcon) {
-      faceLines = [item.label];
-    } else {
-      faceLines = item.lines || [item.label];
-    }
-  } else {
-    faceLines = (back ? item.backLines : item.frontLines) || item.lines || [];
-  }
+  const faceLines = (back ? item.backLines : item.frontLines) || item.lines || [item.label];
 
   const labelText = faceLines.join(" ") || item.label || "";
 
   if (ResourceIcon && !back) {
     return (
       <span className={`student-cell-content student-cell-${item.kind} student-resource-icon-face`}>
-        {mobile && (
-          <span className={`student-cell-caption ${fitTextClass(labelText)}`}>
-            {item.label}
-          </span>
-        )}
-
         <ResourceIcon
           className="student-resource-icon"
           aria-hidden="true"
@@ -95,16 +74,6 @@ function CellContent({ item, back = false, mobile = false }) {
 export default function StudentHive({ view, selectedLesson, onSelect, onBack }) {
   const host = useRef(null), canvas = useRef(null), engine = useRef(null), hitTargets = useRef({});
   const [status, setStatus] = useState("loading");
-  const [mobile, setMobile] = useState(() => window.innerWidth < 800);
-  useEffect(() => {
-    const onResize = () => setMobile(window.innerWidth < 800);
-
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-    };
-  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -144,8 +113,8 @@ export default function StudentHive({ view, selectedLesson, onSelect, onBack }) 
           className={`bee-hit bee-cell student-cell${selectedLesson === item.id ? " is-selected" : ""}`} data-hover-id={item.id}
           aria-label={item.label} aria-pressed={item.kind === "lesson" ? selectedLesson === item.id : undefined}
           onClick={() => onSelect(item.id)} onPointerEnter={hover} onPointerLeave={leave} onFocus={hover} onBlur={leave}>
-          <span className="bee-cell-face bee-cell-front" dir="rtl" aria-hidden="true"><CellContent item={item} mobile={mobile} /></span>
-          <span className="bee-cell-face bee-cell-back" dir="rtl" aria-hidden="true"><CellContent item={item} back mobile={false} /></span>
+          <span className="bee-cell-face bee-cell-front" dir="rtl" aria-hidden="true"><CellContent item={item} /></span>
+          <span className="bee-cell-face bee-cell-back" dir="rtl" aria-hidden="true"><CellContent item={item} back /></span>
         </Cell>; })}
       </div>
     </>}

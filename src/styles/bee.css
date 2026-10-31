@@ -61,6 +61,27 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   transform-origin: center;
 }
 
+/* Keep Museum + Al-Quds logos large and crisp without changing aspect ratio. */
+.bee-cell-brand-logo-museum,
+.bee-cell-brand-logo-alquds {
+  width: auto !important;
+  height: auto !important;
+  object-fit: contain;
+  object-position: center;
+  transform: none !important;
+  image-rendering: auto;
+}
+
+.bee-cell-brand-logo-museum {
+  max-width: 65% !important;
+  max-height: 60% !important;
+}
+
+.bee-cell-brand-logo-alquds {
+  max-width: 70% !important;
+  max-height: 65% !important;
+}
+
 .bee-experience[data-layout="desktop"] .bee-cell-front .bee-cell-brand-logo {
   transform: scale(1.45);
 }
@@ -92,6 +113,20 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   will-change: transform;
 }
 .bee-experience[data-layout="desktop"] .bee-cell-back { visibility: hidden; }
+/* Mobile/classic uses the same real front/back faces as desktop. */
+.bee-experience[data-layout="classic"] .bee-mobile-content { display: none; }
+.bee-experience[data-layout="classic"] .bee-cell-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: 0 0;
+  pointer-events: none;
+  user-select: none;
+  will-change: transform;
+}
+.bee-experience[data-layout="classic"] .bee-cell-back { visibility: hidden; }
 .bee-experience[data-layout="desktop"] .bee-cell-front .bee-cell-icon {
   width: clamp(28px, calc(var(--cell-size) * .29), 72px);
   height: clamp(28px, calc(var(--cell-size) * .29), 72px);

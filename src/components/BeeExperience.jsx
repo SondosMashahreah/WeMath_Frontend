@@ -4,6 +4,8 @@ import HiveIcon from "./HiveIcon.jsx";
 
 const PARP_URL = import.meta.env.VITE_PARP_URL || "http://localhost:5174";
 const STEAM_URL = import.meta.env.VITE_STEAM_URL || "https://steam.ps/";
+const MUSEUM_URL = import.meta.env.VITE_MUSEUM_URL || "https://www.alquds.edu/ar/centers-museums-ar/meet-math-museum-ar/";
+const ALQUDS_URL = import.meta.env.VITE_ALQUDS_URL || "https://www.alquds.edu/ar/";
 const openExternal = url => window.open(url, "_blank", "noopener,noreferrer");
 
 export default function BeeExperience({ active = true, modalOpen = false, skipIntro = false, onStudentRequest, onParentRequest, onSectionRequest }) {
@@ -71,7 +73,7 @@ export default function BeeExperience({ active = true, modalOpen = false, skipIn
       <canvas ref={canvas} className="bee-canvas" aria-hidden="true" />
       <h1 className="sr-only">WE MATH</h1>
       <p className="sr-only" role="status" aria-live="polite" dir="rtl">
-        {finished ? "اضغطي على السداسي الكبير لإظهار الأقسام العشرة." : "تعمل الافتتاحية الآن. يمكن تجاوزها بمفتاح Escape."}
+        {finished ? "اضغطي على السداسي الكبير لإظهار جميع الأقسام." : "تعمل الافتتاحية الآن. يمكن تجاوزها بمفتاح Escape."}
       </p>
 
       {rendererState === "ready" && <>
@@ -90,16 +92,16 @@ export default function BeeExperience({ active = true, modalOpen = false, skipIn
             className={`bee-hit bee-cell${item.lines.length > 1 ? " bee-cell-multiline" : ""}`}
             data-cell={item.id} data-hover-id={item.id} aria-label={item.label}
             onPointerEnter={hover} onPointerLeave={clearHover} onFocus={hover} onBlur={clearHover}
-            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => openExternal(STEAM_URL) : item.id === "research" ? () => openExternal(PARP_URL) : () => onSectionRequest?.(item.id)}
+            onClick={item.id === "students" ? onStudentRequest : item.id === "parents" ? onParentRequest : item.id === "steam" ? () => openExternal(STEAM_URL) : item.id === "research" ? () => openExternal(PARP_URL) : item.id === "museum" ? () => openExternal(MUSEUM_URL) : item.id === "alquds" ? () => openExternal(ALQUDS_URL) : () => onSectionRequest?.(item.id)}
           >
-            <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
+            <span className="bee-cell-content bee-mobile-content" dir={item.id === "steam" || item.id === "museum" ? "ltr" : "rtl"} aria-hidden="true">
               <HiveIcon name={item.id} />
               <span className="bee-cell-label">{item.lines.map((line, i) => <span key={i}>{line}</span>)}</span>
             </span>
             <span className="bee-cell-face bee-cell-front" aria-hidden="true">
               <HiveIcon name={item.id} />
             </span>
-            <span className="bee-cell-face bee-cell-back" dir={item.id === "steam" ? "ltr" : "rtl"} aria-hidden="true">
+            <span className="bee-cell-face bee-cell-back" dir={item.id === "steam" || item.id === "museum" ? "ltr" : "rtl"} aria-hidden="true">
               <span className="bee-cell-label">{item.lines.map((line, i) => <span key={i}>{line}</span>)}</span>
             </span>
           </button>)}

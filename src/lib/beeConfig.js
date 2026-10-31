@@ -43,6 +43,18 @@ export const HIVE_ITEMS = [
     mobile: { x: 3.00, y: 0.35 },
   },
   {
+    id: "museum", label: "Meet Math Museum",
+    lines: ["Meet Math", "Museum"],
+    desktop: { x: 4.98, y: 1.66 },
+    mobile: { x: 3.05, y: 3.55 },
+  },
+  {
+    id: "alquds", label: "جامعة القدس",
+    lines: ["جامعة القدس"],
+    desktop: { x: 4.98, y: -1.66 },
+    mobile: { x: -3.05, y: 3.55 },
+  },
+  {
     id: "research", label: "الأبحاث والدراسات (PARP)",
     lines: ["الأبحاث والدراسات", "(PARP)"],
     desktop: { x: -4.98, y: 0 },
@@ -66,7 +78,7 @@ export const BEE_THEME = {
   icon: "#d54b1d",
 };
 
-// Warm accents + beige. Official PARP/STEAM logos keep their own colors.
+// Warm accents + beige. Official brand logos keep their own colors.
 export const SECTOR_COLORS = ["#F72217", "#d8b578"];
 
 // Measured from the supplied 1336 × 740 desktop sketch.
@@ -82,10 +94,12 @@ export const DESKTOP_HIVE = {
     students: { x: 853.5, y: 141, width: 219, height: 204 },
     teachers: { x: 848, y: 358.5, width: 232, height: 205 },
     parents: { x: 854, y: 566.5, width: 224, height: 199 },
-    initiatives: { x: 1031.5, y: 251, width: 227, height: 204 },
-    competitions: { x: 1040, y: 461, width: 230, height: 198 },
-    research: { x: 1215, y: 352, width: 228, height: 208 },
-    steam: { x: 1217.5, y: 564, width: 213, height: 202 },
+    museum: { x: 1035, y: 141, width: 219, height: 204 },
+    initiatives: { x: 1031.5, y: 358.5, width: 227, height: 204 },
+    competitions: { x: 1040, y: 566.5, width: 230, height: 198 },
+    alquds: { x: 1217.5, y: 141, width: 213, height: 202 },
+    research: { x: 1215, y: 358.5, width: 228, height: 208 },
+    steam: { x: 1217.5, y: 566.5, width: 213, height: 202 },
   },
 };
 export const DESKTOP_FLIP_DURATION = 1;
@@ -138,18 +152,29 @@ export function stageAt(seconds) {
 
 // Match the drawings: extra cells at the sides on desktop, above/below on mobile.
 export function isPortraitLayout(width, height) {
-  return width < 768 || height > width;
+  return height > width;
 }
+
 export function hiveLayout(width, height, finePointer = true) {
   const portrait = isPortraitLayout(width, height);
+
   return {
     mode: portrait ? "mobile" : "desktop",
-    tileRadius: portrait ? 0.82 : 0.82,
-    centerScale: portrait ? 0.72 : 1,
-    desktopMenu: !portrait && finePointer,
+
+    // Portrait phone: bigger small hexagons
+    tileRadius: portrait ? 0.95 : 0.82,
+
+    // Portrait phone: bigger WE MATH center
+    centerScale: portrait ? 0.86 : 1,
+
+    // Landscape phone uses the SAME laptop layout,
+    // even on touch devices with no fine pointer.
+    desktopMenu: !portrait,
+
     desktop: desktopHiveLayout(width, height),
   };
 }
+
 export function cameraBounds(width, height) {
   const aspect = Math.max(width, 1) / Math.max(height, 1);
   const portrait = isPortraitLayout(width, height);

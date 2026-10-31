@@ -17,7 +17,12 @@ export function createStudentScene({ canvas, host, hitTargets, reduced = false }
   wall.castShadow = false;
   const pointerMedia = window.matchMedia("(hover: hover) and (pointer: fine)");
   let content, resources, hive, emblem, design, width = 1, height = 1, hovered = null, disposed = false, raf = 0;
+  const AUTO_FLIP_DELAY = 2;
+  const AUTO_FLIP_INTERVAL = 12;
+  const AUTO_FLIP_STAGGER = 0.25;
+  const AUTO_FLIP_VISIBLE_HOLD = 2;
   let items = [];
+  let autoFlipStartedAt = Number.POSITIVE_INFINITY;
   const entrance = { value: 1 };
   const { placeHit, placeFace } = createHiveProjection({ camera, hitTargets, getSize: () => ({ width, height }) });
 
@@ -45,6 +50,7 @@ export function createStudentScene({ canvas, host, hitTargets, reduced = false }
   function releaseContent() {
     gsap.killTweensOf(entrance);
     hive?.buttons.forEach(button => gsap.killTweensOf(button.flip));
+    autoFlipStartedAt = Number.POSITIVE_INFINITY;
     if (content) scene.remove(content);
     hive?.dispose(); resources?.dispose();
     hive = null;
@@ -63,11 +69,81 @@ export function createStudentScene({ canvas, host, hitTargets, reduced = false }
     hive = createSmallHive({ world: content, mesh, material, prism, tube, gold, items, design });
     hive.applyLayout({ desktopMenu: true, design });
     entrance.value = reduced ? 1 : 0;
+    autoFlipStartedAt = reduced
+      ? Number.POSITIVE_INFINITY
+      : performance.now() / 1000 + AUTO_FLIP_DELAY;
     if (!reduced) gsap.to(entrance, { value: 1, duration: .5, ease: "power2.out" });
   }
+
+  function getAutoFlipRank(button) {
+  const ordered = [...hive.buttons].sort((a, b) => {
+    const aPos = design.cells[a.item.id];
+    const bPos = design.cells[b.item.id];
+
+    if (design.mobile) {
+      // Mobile: top -> bottom
+      return aPos.y - bPos.y || aPos.x - bPos.x;
+    }
+
+    // Desktop: left -> right
+    return aPos.x - bPos.x || aPos.y - bPos.y;
+  });
+
+  return ordered.findIndex(
+    candidate => candidate.item.id === button.item.id
+  );
+}
+
+  function updateFlip(button, index, now) {
+    const hoverTarget = pointerMedia.matches && hovered === button.item.id;
+    const autoEnabled = !reduced
+      && (!pointerMedia.matches || !hovered)
+      && Number.isFinite(autoFlipStartedAt);
+    const cycle = autoEnabled && now >= autoFlipStartedAt
+      ? (now - autoFlipStartedAt) % AUTO_FLIP_INTERVAL
+      : -1;
+   const count = hive.buttons.length;
+
+const forwardRank = getAutoFlipRank(button);
+const reverseRank = count - 1 - forwardRank;
+
+const forwardStart =
+  forwardRank * AUTO_FLIP_STAGGER;
+
+const reverseBase =
+  (count - 1) * AUTO_FLIP_STAGGER +
+  DESKTOP_FLIP_DURATION +
+  AUTO_FLIP_VISIBLE_HOLD;
+
+const reverseStart =
+  reverseBase +
+  reverseRank * AUTO_FLIP_STAGGER;
+
+const autoTarget =
+  cycle >= forwardStart &&
+  cycle < reverseStart;
+  
+  const target = hoverTarget || autoTarget ? 1 : 0;
+
+    if (reduced) {
+      gsap.killTweensOf(button.flip);
+      button.flip.value = hoverTarget ? 1 : 0;
+      button.flipTarget = button.flip.value;
+    } else if (button.flipTarget !== target) {
+      button.flipTarget = target;
+      gsap.killTweensOf(button.flip);
+      gsap.to(button.flip, {
+        value: target,
+        duration: DESKTOP_FLIP_DURATION,
+        ease: "power2.inOut",
+      });
+    }
+  }
+
   function frame() {
     if (disposed) return;
     if (hive) {
+      const now = performance.now() / 1000;
       position(emblem, design.center, DISC_RADIUS);
       emblem.position.z = hovered === "center" ? .05 : 0;
       for (const [i, button] of hive.buttons.entries()) {
@@ -75,6 +151,7 @@ export function createStudentScene({ canvas, host, hitTargets, reduced = false }
         button.progress = progress;
         button.group.visible = progress > .001;
         position(button.group, design.cells[button.item.id], 1, Math.max(progress, .001));
+        updateFlip(button, i, now);
         button.pivot.rotation.y = -Math.PI * button.flip.value;
       }
       scene.updateMatrixWorld();
@@ -92,24 +169,39 @@ export function createStudentScene({ canvas, host, hitTargets, reduced = false }
   }
   function hover(id) {
     hovered = id;
-    if (!hive) return;
-    for (const button of hive.buttons) {
-      const target = pointerMedia.matches && button.item.id === id ? 1 : 0;
-      gsap.killTweensOf(button.flip);
-      if (reduced) button.flip.value = target;
-      else gsap.to(button.flip, { value: target, duration: DESKTOP_FLIP_DURATION, ease: "power2.inOut" });
-    }
   }
   const observer = new ResizeObserver(resize); observer.observe(host.parentElement || host);
-  const visibility = () => { cancelAnimationFrame(raf); if (!document.hidden) raf = requestAnimationFrame(frame); };
-  const pointerChange = () => hover(null);
+  const visibility = () => {
+    cancelAnimationFrame(raf);
+    if (document.hidden) {
+      autoFlipStartedAt = Number.POSITIVE_INFINITY;
+      return;
+    }
+    if (!reduced && hive) autoFlipStartedAt = performance.now() / 1000 + AUTO_FLIP_DELAY;
+    raf = requestAnimationFrame(frame);
+  };
+  const pointerChange = () => {
+    hover(null);
+    autoFlipStartedAt = !reduced && hive
+      ? performance.now() / 1000 + AUTO_FLIP_DELAY
+      : Number.POSITIVE_INFINITY;
+  };
   window.addEventListener("resize", resize);
   document.addEventListener("visibilitychange", visibility);
   pointerMedia.addEventListener("change", pointerChange);
   resize(); raf = requestAnimationFrame(frame);
   return {
     setItems, hover,
-    setReduced(value) { reduced = value; if (value) { gsap.killTweensOf(entrance); entrance.value = 1; hover(hovered); } },
+    setReduced(value) {
+      reduced = value;
+      if (value) {
+        gsap.killTweensOf(entrance);
+        entrance.value = 1;
+        autoFlipStartedAt = Number.POSITIVE_INFINITY;
+      } else if (hive) {
+        autoFlipStartedAt = performance.now() / 1000 + AUTO_FLIP_DELAY;
+      }
+    },
     dispose() {
       disposed = true; cancelAnimationFrame(raf); observer.disconnect();
       window.removeEventListener("resize", resize);

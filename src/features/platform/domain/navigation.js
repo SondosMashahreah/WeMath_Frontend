@@ -2,7 +2,7 @@ export const EXTENSION_IDS = new Set(["teachers", "guest", "workshops", "competi
 export const PAGE_SIZE = 6;
 export const TITLES = { teachers: "المعلّم", guest: "الزائر", workshops: "الورشات", competitions: "المسابقات", initiatives: "المبادرات وقصص النجاح", research: "الأبحاث والدراسات", assistant: "Algo", teacher_resources: "موارد المعلّم" };
 export const CATEGORIES = {
-  workshops: { scientific: "ورش عالمية", universities: "جامعات ومؤسسات", directorates: "مديريات التربية" },
+  workshops: { scientific: "ورشات عالمية", universities: "جامعات ومؤسسات", directorates: "مديريات التربية" },
   competitions: { scientific: "محلية", international: "عالمية" },
   initiatives: { schools: "مبادرات المدارس", directorates: "مبادرات المديريات", teachers: "مبادرات المعلمين", students: "مبادرات الطلاب", teacher_stories: "قصص نجاح المعلمين", student_stories: "قصص نجاح الطلاب", school_stories: "قصص نجاح المدارس" },
   teacher_resources: { activities: "أنشطة وألعاب", questions: "بنك الأسئلة", preparation: "نماذج تحضير" },

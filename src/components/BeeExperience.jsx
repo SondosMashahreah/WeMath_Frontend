@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BEE_THEME, HIVE_ITEMS } from "../lib/beeConfig.js";
 import HiveIcon from "./HiveIcon.jsx";
 
-const PARP_URL = import.meta.env.VITE_PARP_URL || "http://localhost:5174";
+const PARP_URL = import.meta.env.VITE_PARP_URL || "https://parp-k2s1.onrender.com/";
 const STEAM_URL = import.meta.env.VITE_STEAM_URL || "https://steam.ps/";
 const MUSEUM_URL = import.meta.env.VITE_MUSEUM_URL || "https://www.alquds.edu/ar/centers-museums-ar/meet-math-museum-ar/";
 const ALQUDS_URL = import.meta.env.VITE_ALQUDS_URL || "https://www.alquds.edu/ar/";

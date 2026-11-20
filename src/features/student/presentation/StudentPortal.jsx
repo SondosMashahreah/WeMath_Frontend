@@ -74,9 +74,10 @@ function pick(id) {
     return go(`${basePath}/account`);
   }
 
-  // Lesson activity hexagons stay clickable visually,
-  // but intentionally do nothing for now.
-  return;
+  const resource = id.slice(1);
+  if (["quiz", "worksheet", "film", "activity", "game", "story_video"].includes(resource)) {
+    return go(studentPath({ ...state, activity: resource }, basePath));
+  }
 }
   if (!valid) return <RouteFeedback back={basePath} message="هذا الدرس أو النشاط لا يتبع المنهاج المتاح لهذا الحساب." />;
   return <main className="student-portal" dir="rtl" ref={scroll}>

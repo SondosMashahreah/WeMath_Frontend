@@ -8,6 +8,16 @@ function PolygonExplorer() {
   return <div className="polygon-explorer"><svg viewBox="0 0 200 200" role="img" aria-label={`شكل من ${sides} أضلاع`}><polygon points={points} /></svg>
     <label htmlFor="polygon-sides">عدد الأضلاع: {sides}</label><input id="polygon-sides" type="range" min="3" max="8" value={sides} onChange={event => setSides(Number(event.target.value))} /></div>;
 }
+function PublishedItem({ item, media, onVideoPlay }) {
+  const [answers, setAnswers] = useState({}), [checked, setChecked] = useState(false);
+  const url = safeExternalUrl(item.url);
+  return <article className="cms-published-resource"><h3>{item.title}</h3><p style={{ whiteSpace: 'pre-wrap' }}>{item.text}</p>
+    {url && <a href={url} target="_blank" rel="noopener noreferrer">فتح المورد ↗</a>}
+    {media && url && <video controls preload="metadata" src={url} onPlay={onVideoPlay} />}
+    {(item.attachments || []).map((link, i) => safeExternalUrl(link) && <p key={i}><a href={safeExternalUrl(link)} target="_blank" rel="noopener noreferrer">المرفق {i + 1} ↗</a></p>)}
+    {item.questions?.length > 0 && <div><p>تدريب ذاتي — النتيجة هنا لا تُسجل كعلامة رسمية.</p>{item.questions.map((q, i) => <fieldset key={i}><legend>{i + 1}. {q.prompt}</legend>{q.options.map((option, j) => <label key={j} style={{ display: 'block' }}><input type="radio" name={`cms-${item.content_id}-${i}`} checked={answers[i] === j} onChange={() => { setAnswers({ ...answers, [i]: j }); setChecked(false); }} /> {option}</label>)}{checked && <p role="status">{answers[i] === q.correct ? 'إجابة صحيحة' : `الإجابة الصحيحة: ${q.options[q.correct]}`} {q.explanation}</p>}</fieldset>)}<button className="student-primary-button" disabled={Object.keys(answers).length !== item.questions.length} onClick={() => setChecked(true)}>تحقق من الإجابات</button></div>}
+  </article>;
+}
 export default function LessonResourceDialog({ lessonId, activity, title, onClose, readOnlyChildId, onVideoPlay }) {
   const path = readOnlyChildId ? `/api/parents/children/${readOnlyChildId}/lessons/${lessonId}` : `/api/learning/lessons/${lessonId}`;
   const { data, error, loading, reload } = useRemote(path);
@@ -16,7 +26,8 @@ export default function LessonResourceDialog({ lessonId, activity, title, onClos
   return <HexDialog onClose={onClose} title={title} subtitle={resource?.label || "موارد الدرس"}>
     {loading && <p role="status">جاري تحميل المورد…</p>}{error && <div role="alert"><p>{error.message}</p><button className="student-secondary-button" onClick={reload}>إعادة المحاولة</button></div>}
     {resource && <div className="lesson-resource">{resource.demo && <span className="demo-badge">محتوى تجريبي</span>}<p>{resource.text}</p>
-      {activity === "game" && <PolygonExplorer />}
+      {resource.items?.map(item => <PublishedItem key={item.content_id} item={item} media={mediaActivity} onVideoPlay={onVideoPlay} />)}
+      {activity === "game" && resource.demo && <PolygonExplorer />}
       {mediaActivity && mediaUrl && <><video controls preload="metadata" src={mediaUrl} onPlay={onVideoPlay}>متصفحك لا يدعم عرض الفيديو.</video><a href={mediaUrl} target="_blank" rel="noopener noreferrer">فتح المحتوى في نافذة جديدة ↗</a></>}
     </div>}
   </HexDialog>;

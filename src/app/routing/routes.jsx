@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+const AdminApp = lazy(() => import("../../features/admin/AdminApp.jsx"));
 import AppLayout from "../layouts/AppLayout.jsx";
 import RequireAccount from "./RequireAccount.jsx";
 import RouteErrorPage from "./RouteErrorPage.jsx";
@@ -32,7 +34,7 @@ const documentRoutes = kind => [
   { path: ":documentId", element: <TeacherDocumentPage kind={kind} /> },
   { path: ":documentId/edit", element: <TeacherDocumentEditorPage kind={kind} /> },
 ];
-export const routes = [{
+export const routes = [{ path: "/admin/*", element: <Suspense fallback={<p dir="rtl">جاري تحميل لوحة الإدارة…</p>}><AdminApp /></Suspense>, errorElement: <RouteErrorPage /> }, {
   path: "/", element: <AppLayout />, errorElement: <RouteErrorPage />,
   children: [
     { index: true, element: null },

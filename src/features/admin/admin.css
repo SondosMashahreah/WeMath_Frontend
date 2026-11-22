@@ -5,3 +5,20 @@
 .cms-legacy-row{padding:18px 0;border-bottom:1px solid var(--cms-line);flex-wrap:wrap}.cms-legacy-row>div{flex:1;min-width:220px}.cms-legacy-row select{width:240px}
 /* The existing bee experience locks body scrolling; the dashboard owns its scroll area. */
 .cms-root{height:100dvh;overflow:auto}.cms-published-resource{border-bottom:1px solid #d8c9b5;padding:16px 0}
+
+/* Math exam studio */
+.cms-exam-builder { min-width: 0; }
+.cms-exam-builder .cms-actions { flex-wrap: wrap; }
+.cms-exam-builder button[aria-pressed="true"] { background: #263f36; color: white; border-color: #263f36; }
+.cms-generator, .cms-bank-save { padding: 22px; margin: 20px 0; border-radius: 16px; background: #f5f7f4; border: 1px solid #d6ded7; }
+.cms-bank-save { background: #fff4e9; border-color: #edbd91; }
+.cms-bank-item { padding: 20px 0; border-bottom: 1px solid #dce1db; }
+.cms-bank-item .cms-row { flex-wrap: wrap; }
+.cms-bank-item p { margin: 8px 0; }
+.cms-variable { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; align-items: end; gap: 10px; }
+.cms-variable-head { font-weight: 700; margin-block: 16px; }
+.cms-root .cms-inline-check { display: flex; flex-direction: row; align-items: center; gap: 10px; }
+.cms-root .cms-inline-check input { width: auto; }
+.cms-question .exam-preview { margin-top: 16px; }
+.cms-generator > div > div { margin-bottom: 18px; }
+@media (max-width: 640px) { .cms-variable { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cms-generator, .cms-bank-save { padding: 12px; } }

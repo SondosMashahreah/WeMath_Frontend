@@ -1,3 +1,5 @@
+import MathText from "../../../shared/exams/MathText.jsx";
+import QuestionImage from "../../../shared/exams/QuestionImage.jsx";
 import { useState } from "react";
 import HexDialog from "../../account/presentation/HexDialog.jsx";
 import { useRemote } from "../../../shared/api/useRemote.js";
@@ -15,7 +17,7 @@ function PublishedItem({ item, media, onVideoPlay }) {
     {url && <a href={url} target="_blank" rel="noopener noreferrer">فتح المورد ↗</a>}
     {media && url && <video controls preload="metadata" src={url} onPlay={onVideoPlay} />}
     {(item.attachments || []).map((link, i) => safeExternalUrl(link) && <p key={i}><a href={safeExternalUrl(link)} target="_blank" rel="noopener noreferrer">المرفق {i + 1} ↗</a></p>)}
-    {item.questions?.length > 0 && <div><p>تدريب ذاتي — النتيجة هنا لا تُسجل كعلامة رسمية.</p>{item.questions.map((q, i) => <fieldset key={i}><legend>{i + 1}. {q.prompt}</legend>{q.options.map((option, j) => <label key={j} style={{ display: 'block' }}><input type="radio" name={`cms-${item.content_id}-${i}`} checked={answers[i] === j} onChange={() => { setAnswers({ ...answers, [i]: j }); setChecked(false); }} /> {option}</label>)}{checked && <p role="status">{answers[i] === q.correct ? 'إجابة صحيحة' : `الإجابة الصحيحة: ${q.options[q.correct]}`} {q.explanation}</p>}</fieldset>)}<button className="student-primary-button" disabled={Object.keys(answers).length !== item.questions.length} onClick={() => setChecked(true)}>تحقق من الإجابات</button></div>}
+    {item.questions?.length > 0 && <div><p>تدريب ذاتي — النتيجة هنا لا تُسجل كعلامة رسمية.</p>{item.questions.map((q, i) => <fieldset key={i}><legend>{i + 1}. <MathText>{q.prompt}</MathText> <small>({q.points || 1} علامة)</small></legend><QuestionImage question={q} />{q.options.map((option, j) => <label key={j} style={{ display: 'block' }}><input type="radio" name={`cms-${item.content_id}-${i}`} checked={answers[i] === j} onChange={() => { setAnswers({ ...answers, [i]: j }); setChecked(false); }} /> <MathText>{option}</MathText></label>)}{checked && <p role="status">{answers[i] === q.correct ? 'إجابة صحيحة' : `الإجابة الصحيحة: $<MathText>{q.options[q.correct]}</MathText>`} <MathText>{q.explanation}</MathText></p>}</fieldset>)}<span>{checked && <p role="status">العلامة: {item.questions.reduce((sum, q, i) => sum + (answers[i] === q.correct ? q.points || 1 : 0), 0)} / {item.questions.reduce((sum, q) => sum + (q.points || 1), 0)}</p>}</span><button className="student-primary-button" disabled={Object.keys(answers).length !== item.questions.length} onClick={() => setChecked(true)}>تحقق من الإجابات</button></div>}
   </article>;
 }
 export default function LessonResourceDialog({ lessonId, activity, title, onClose, readOnlyChildId, onVideoPlay }) {

@@ -1,3 +1,5 @@
+import MathText from "../../../shared/exams/MathText.jsx";
+import QuestionImage from "../../../shared/exams/QuestionImage.jsx";
 import { useEffect, useRef, useState } from "react";
 import { teacherRepository } from "../infrastructure/teacherRepository.js";
 import PlatformDialog from "./PlatformDialog.jsx";
@@ -17,7 +19,7 @@ export default function DocumentPreview({ document, onClose, onEdit, onArchived 
       <h2>{document.title}</h2><p>WE MATH · الصف {document.grade}</p>
       {document.kind === "plan" ? <><p>المدة: {document.content.duration} دقيقة</p>{[["objectives", "الأهداف"], ["steps", "خطوات التنفيذ"], ["assessment", "التقويم"], ["materials", "الأدوات"]].map(([key, title]) => <section key={key}><h3>{title}</h3><p className="platform-prose">{document.content[key] || "—"}</p></section>)}</> : <>
         <p>اسم الطالب: __________________</p><p className="platform-prose">{document.content.instructions}</p>
-        {document.content.questions.map((q, index) => <section className="platform-print-question" key={index}><h3>{index + 1}. {q.prompt}</h3><ol>{q.options.map((option, i) => <li key={i}>{option}</li>)}</ol>{answers && <p className="platform-answer">الإجابة: {q.options[q.correct]}<br />{q.explanation}</p>}</section>)}
+        {document.content.questions.map((q, index) => <section className="platform-print-question" key={index}><h3>{index + 1}. <MathText>{q.prompt}</MathText> <small>({q.points || 1} علامة)</small></h3><QuestionImage question={q} /><ol>{q.options.map((option, i) => <li key={i}><MathText>{option}</MathText></li>)}</ol>{answers && <p className="platform-answer">الإجابة: <MathText>{q.options[q.correct]}</MathText><br /><MathText>{q.explanation}</MathText></p>}</section>)}
       </>}
     </article>
     <div className="platform-actions platform-no-print">

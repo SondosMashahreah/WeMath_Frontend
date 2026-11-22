@@ -1,0 +1,8 @@
+.exam-math-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.exam-formula { display: inline-block; direction: ltr; unicode-bidi: isolate; max-width: 100%; overflow-x: auto; vertical-align: middle; }
+.exam-question-image { display: block; max-width: min(100%, 560px); max-height: 320px; object-fit: contain; margin: 16px auto; }
+.exam-preview { padding: 18px; background: #fff; border: 1px solid #d8dedb; border-radius: 12px; }
+.exam-preview ol { padding-inline-start: 25px; }
+.exam-preview li { padding: 6px; }
+.exam-preview strong { color: #27674b; }
+@media print { .exam-question-image { max-height: 240px; } .exam-preview { break-inside: avoid; } }

@@ -1,3 +1,4 @@
+import QuestionPreview from "../../../shared/exams/QuestionPreview.jsx";
 import { useEffect, useRef, useState } from "react";
 import { useCurriculum } from "../../student/application/curriculumContext.js";
 import { useDocumentDraft } from "../application/useDocumentDraft.js";
@@ -19,7 +20,7 @@ function EditorForm({ catalog, kind, initial, onClose, onSaved }) {
   const updateQuestion = (index, key, value) => setContent(previous => ({ ...previous, questions: previous.questions.map((question, i) => i === index ? { ...question, [key]: value } : question) }));
   async function save(event) {
     event.preventDefault(); if (busy) return;
-    if (kind === "assessment" && content.questions.some(q => q.options.length < 2 || q.options.length > 6 || q.options.some(option => !option.trim()) || new Set(q.options.map(option => option.trim())).size !== q.options.length || q.correct >= q.options.length)) { setError("كل سؤال يحتاج خيارين إلى ستة خيارات مختلفة، وتحديد الإجابة الصحيحة."); return; }
+    if (kind === "assessment" && content.questions.some(q => q.options.length < 2 || q.options.length > 6 || q.options.some(option => !option.trim()) || new Set(q.options.map(option => option.trim())).size !== q.options.length || q.correct < 0 || q.correct >= q.options.length)) { setError("كل سؤال يحتاج خيارين إلى ستة خيارات مختلفة، وتحديد الإجابة الصحيحة."); return; }
     const abort = new AbortController(); controller.current = abort; setBusy(true); setError("");
     const payload = { kind, title: draft.title, grade: Number(draft.grade), book_id: draft.book_id || null, lesson_id: draft.lesson_id || null, content, ...(initial?.id ? { version } : {}) };
     try {
@@ -41,10 +42,16 @@ function EditorForm({ catalog, kind, initial, onClose, onSaved }) {
       </> : <>
         <label>تعليمات الاختبار<textarea maxLength={2000} value={content.instructions} onChange={e => setContent({ ...content, instructions: e.target.value })} /></label>
         {content.questions.map((question, index) => <fieldset key={index}><legend>السؤال {index + 1}</legend>
+          <label>نوع السؤال<select value={question.type || 'mcq'} onChange={e => setContent(previous => ({ ...previous, questions: previous.questions.map((q, i) => i === index ? { ...q, type: e.target.value, options: e.target.value === 'true_false' ? ['صح', 'خطأ'] : ['', '', '', ''], correct: -1 } : q) }))}><option value="mcq">اختيار من متعدد</option><option value="true_false">صح أو خطأ</option></select></label>
+          <label>علامة السؤال<input type="number" min={1} max={100} value={question.points ?? 1} onChange={e => updateQuestion(index, 'points', Number(e.target.value))} /></label>
+          <label>رابط صورة السؤال (HTTPS)<input type="url" dir="ltr" maxLength={2000} value={question.image_url || ''} onChange={e => updateQuestion(index, 'image_url', e.target.value)} /></label>
+          <label>وصف الصورة<input maxLength={300} value={question.image_alt || ''} onChange={e => updateQuestion(index, 'image_alt', e.target.value)} /></label>
+          <p>للصيغ الرياضية استخدم {'$\\frac{1}{2} + x^2$'}.</p>
           <label>نص السؤال<textarea required maxLength={1500} value={question.prompt} onChange={e => updateQuestion(index, "prompt", e.target.value)} /></label>
-          <label>الخيارات — خيار في كل سطر<textarea required maxLength={3005} rows={4} value={question.options.join("\n")} onChange={e => updateQuestion(index, "options", e.target.value.split("\n"))} /></label>
-          <label>الإجابة الصحيحة<select value={question.correct} onChange={e => updateQuestion(index, "correct", Number(e.target.value))}>{question.options.map((option, i) => <option key={i} value={i}>{i + 1}. {option.slice(0, 50) || "خيار فارغ"}</option>)}</select></label>
+          <label>الخيارات — خيار في كل سطر<textarea disabled={question.type === "true_false"} required maxLength={3005} rows={4} value={question.options.join("\n")} onChange={e => updateQuestion(index, "options", e.target.value.split("\n"))} /></label>
+          <label>الإجابة الصحيحة<select value={question.correct} onChange={e => updateQuestion(index, "correct", Number(e.target.value))}><option value={-1}>اختر الإجابة الصحيحة</option>{question.options.map((option, i) => <option key={i} value={i}>{i + 1}. {option.slice(0, 50) || "خيار فارغ"}</option>)}</select></label>
           <label>تفسير الإجابة (اختياري)<textarea maxLength={2000} value={question.explanation} onChange={e => updateQuestion(index, "explanation", e.target.value)} /></label>
+          <QuestionPreview question={question} />
           {content.questions.length > 1 && <button className="student-secondary-button" type="button" onClick={() => setContent({ ...content, questions: content.questions.filter((_, i) => i !== index) })}>حذف السؤال {index + 1}</button>}
         </fieldset>)}
         <button className="student-secondary-button" type="button" disabled={content.questions.length >= 30} onClick={() => setContent({ ...content, questions: [...content.questions, emptyQuestion()] })}>إضافة سؤال ({content.questions.length}/30)</button>

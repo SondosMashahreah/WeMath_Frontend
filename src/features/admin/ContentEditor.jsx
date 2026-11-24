@@ -1,3 +1,4 @@
+import { dayValid } from "../../shared/calendar/dates.js";
 import ExamBuilder from './ExamBuilder.jsx';
 import { flushSync } from "react-dom";
 import { useEffect, useState } from 'react';
@@ -8,7 +9,7 @@ import { STATUS } from './constants.js';
 const initial = { summary: '', body: '', source_url: '', lesson_id: '', category: '', event_date: '', organizer: '', audience: '', location: '', registration_start: '', registration_end: '', attachments: [], questions: [], results: '', examples: [] };
 export default function ContentEditor({ me }) {
   const { id } = useParams(), [params] = useSearchParams(), navigate = useNavigate();
-  const [form, setForm] = useState(() => id ? null : { title: '', workspace_id: Number(params.get('workspace')), module: params.get('module') || '', payload: { ...initial }, status: 'draft' }), [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false);
+  const [form, setForm] = useState(() => id ? null : { title: '', workspace_id: Number(params.get('workspace')), module: params.get('module') || '', payload: { ...initial, ...(params.get('module') === 'workshops' ? { category: params.get('category') || '', event_date: dayValid(params.get('event_date')) ? params.get('event_date') : '' } : {}) }, status: 'draft' }), [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false);
   const blocker = useBlocker(({ currentLocation, nextLocation }) => dirty && currentLocation.pathname !== nextLocation.pathname);
   const catalog = useCmsData('/api/curriculum/catalog');
   useEffect(() => {
@@ -41,6 +42,7 @@ export default function ContentEditor({ me }) {
   return <>
     {blocker.state === "blocked" && <div role="alertdialog" aria-label="تغييرات غير محفوظة" className="cms-panel"><p>لديك تغييرات غير محفوظة. هل تريدين مغادرة النموذج؟</p><button onClick={() => blocker.reset()}>البقاء ومتابعة التحرير</button><button onClick={() => blocker.proceed()}>مغادرة دون حفظ</button></div>}
     <div className="cms-heading"><div><span className="cms-eyebrow">{workspace.name} / {config.label}</span><h1>{id ? 'تحرير المادة' : 'إضافة مادة جديدة'}</h1><p>ابدئي بنموذج فارغ. احفظي المسودة ثم أرسليها للمراجعة.</p></div><span className={`cms-badge ${form.status}`}>{STATUS[form.status]}</span></div>
+    {form.module === 'workshops' && <p><Link to={`/admin/workshops?${new URLSearchParams({ workspace: form.workspace_id, category: form.payload.category || 'directorates', ...(form.payload.event_date ? { month: form.payload.event_date.slice(0, 7), day: form.payload.event_date, view: 'day' } : {}) })}`}>← العودة إلى تقويم الورشات</Link> · الموعد مطلوب لنشر الورشة؛ يمكن حفظ المسودة قبل تحديده.</p>}
     <form className="cms-panel cms-editor" onSubmit={save}>
       {error && <p role="alert" className="cms-error">{error}</p>}{notice && <p role="status" className="cms-success">{notice}</p>}
       <label>عنوان المادة *<input required minLength={2} maxLength={180} value={form.title} onChange={e => patch({ title: e.target.value })} placeholder="اكتبي عنوانًا واضحًا للمادة" /></label>

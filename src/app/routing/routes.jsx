@@ -16,6 +16,7 @@ import TeacherCurriculumPage from "../../features/platform/presentation/pages/Te
 import TeacherDocumentsPage from "../../features/platform/presentation/pages/TeacherDocumentsPage.jsx";
 import TeacherDocumentPage from "../../features/platform/presentation/pages/TeacherDocumentPage.jsx";
 import TeacherDocumentEditorPage from "../../features/platform/presentation/pages/TeacherDocumentEditorPage.jsx";
+import WorkshopsPage from "../../features/platform/presentation/pages/WorkshopsPage.jsx";
 import ContentPage from "../../features/platform/presentation/pages/ContentPage.jsx";
 import AssistantPage from "../../features/platform/presentation/pages/AssistantPage.jsx";
 
@@ -25,8 +26,8 @@ const journeyRoutes = element => [
   ...["books/:bookId", "books/:bookId/units/:unitId", "books/:bookId/units/:unitId/lessons/:lessonId", "books/:bookId/units/:unitId/lessons/:lessonId/activities/:activity"].map(path => ({ path, element })),
 ];
 const contentRoutes = (section, base = `/${section}`, home = "/") => [
-  { index: true, element: <ContentPage section={section} base={base} home={home} /> },
-  ...[":category", ":category/:entryId"].map(path => ({ path, element: <ContentPage section={section} base={base} home={home} /> })),
+  { index: true, element: section === "workshops" ? <WorkshopsPage base={base} home={home} /> : <ContentPage section={section} base={base} home={home} /> },
+  ...[":category", ":category/:entryId"].map(path => ({ path, element: section === "workshops" ? <WorkshopsPage base={base} home={home} /> : <ContentPage section={section} base={base} home={home} /> })),
 ];
 const documentRoutes = kind => [
   { index: true, element: <TeacherDocumentsPage kind={kind} /> },

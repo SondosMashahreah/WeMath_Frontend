@@ -14,7 +14,8 @@
     "test:student": "node --test tests/*.test.mjs",
     "test:navigation": "node scripts/verify-student-navigation.mjs",
     "test:routing": "node scripts/verify-routing.mjs",
-    "test:exams": "node scripts/verify-exams.mjs"
+    "test:exams": "node scripts/verify-exams.mjs",
+    "test:calendar": "node scripts/verify-workshop-calendar.mjs"
   },
   "dependencies": {
     "@fontsource-variable/manrope": "^5.3.0",

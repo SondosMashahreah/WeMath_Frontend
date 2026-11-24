@@ -1,3 +1,4 @@
+import MediaGallery from "../../../shared/media/MediaGallery.jsx";
 import { externalURL } from "../domain/navigation.js";
 import PlatformDialog from "./PlatformDialog.jsx";
 import PracticeActivity from "./PracticeActivity.jsx";
@@ -13,7 +14,7 @@ export default function EntryDetail({ entry, onClose }) {
       {details.registration_start && <><dt>بدء التسجيل</dt><dd>{details.registration_start}</dd></>}
       {details.registration_end && <><dt>نهاية التسجيل</dt><dd>{details.registration_end}</dd></>}
     </dl>}
-    <p className="platform-prose">{entry.body}</p>
+    <p className="platform-prose">{entry.body}</p><MediaGallery items={details.media || []} />
     {entry.section === "competitions" && details.examples?.length > 0 && <section><h3>أمثلة ومواد من دورات سابقة</h3><ul>{details.examples.map((example, index) => <li key={index}>{example}</li>)}</ul></section>}
     {["competitions", "workshops"].includes(entry.section) && details.attachments?.length > 0 && <section><h3>المرفقات</h3><div className="platform-actions">{details.attachments.map((url, index) => <a key={url} className="student-secondary-button" href={externalURL(url) || undefined} target="_blank" rel="noopener noreferrer">مرفق {index + 1} ↗</a>)}</div></section>}
     {details.results && <p className="platform-prose"><strong>النتائج:</strong> {details.results}</p>}

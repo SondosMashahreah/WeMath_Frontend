@@ -30,7 +30,8 @@ try {
   await fill(input('اسم المستخدم'), 'administrator'); await fill(input('كلمة المرور'), 'test-password-123'); await submit();
   assert(document.body.textContent.includes('محتوى المنصة'));
   await go('/admin/team'); await click(button('＋ حساب جديد'));
-  await fill(input('الاسم الكامل'), 'فريق الاختبارات'); await fill(input('اسم المستخدم'), 'exam-editor'); await fill(input('كلمة المرور'), 'test-password-123'); await submit();
+  await fill(input('الاسم الكامل'), 'فريق الاختبارات'); await fill(input('اسم المستخدم'), 'exam-editor'); await fill(input('كلمة المرور'), 'test-password-123'); await fill(input('الإيميل'), 'editor@example.org'); await fill(input('نوع الفريق'), 'students'); await submit();
+  assert.equal(api.calls.find(c => c.path === '/api/cms/staff' && c.method === 'POST').body.team_type, 'students');
   assert(document.body.textContent.includes('exam-editor'));
   await go('/admin/workspaces'); await click(button('＋ لوحة جديدة'));
   await fill(input('اسم اللوحة'), 'فريق الامتحانات وأوراق العمل');

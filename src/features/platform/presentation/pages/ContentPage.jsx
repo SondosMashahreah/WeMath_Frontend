@@ -22,9 +22,7 @@ if (!category) {
       title={TITLES[section]}
       items={items}
       onSelect={
-        section === "initiatives" || section === "workshops"
-          ? () => {}
-          : id => go(contentPath(base, id))
+        id => go(contentPath(base, id))
       }
       onBack={() => go(home)}
     />

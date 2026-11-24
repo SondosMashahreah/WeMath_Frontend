@@ -1,3 +1,4 @@
+import MediaEditor from './MediaEditor.jsx';
 import { dayValid } from "../../shared/calendar/dates.js";
 import ExamBuilder from './ExamBuilder.jsx';
 import { flushSync } from "react-dom";
@@ -6,22 +7,22 @@ import { Link, useBlocker, useNavigate, useParams, useSearchParams } from 'react
 import { cmsRequest } from './api.js';
 import { useCmsData } from './useCmsData.js';
 import { STATUS } from './constants.js';
-const initial = { summary: '', body: '', source_url: '', lesson_id: '', category: '', event_date: '', organizer: '', audience: '', location: '', registration_start: '', registration_end: '', attachments: [], questions: [], results: '', examples: [] };
+const initial = { media: [], summary: '', body: '', source_url: '', lesson_id: '', category: '', event_date: '', organizer: '', audience: '', location: '', registration_start: '', registration_end: '', attachments: [], questions: [], results: '', examples: [] };
 export default function ContentEditor({ me }) {
   const { id } = useParams(), [params] = useSearchParams(), navigate = useNavigate();
-  const [form, setForm] = useState(() => id ? null : { title: '', workspace_id: Number(params.get('workspace')), module: params.get('module') || '', payload: { ...initial, ...(params.get('module') === 'workshops' ? { category: params.get('category') || '', event_date: dayValid(params.get('event_date')) ? params.get('event_date') : '' } : {}) }, status: 'draft' }), [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false);
-  const blocker = useBlocker(({ currentLocation, nextLocation }) => dirty && currentLocation.pathname !== nextLocation.pathname);
+  const [form, setForm] = useState(() => id ? null : { title: '', workspace_id: Number(params.get('workspace')), module: params.get('module') || '', payload: { ...initial, ...(params.get('module') === 'workshops' ? { category: params.get('category') || '', event_date: dayValid(params.get('event_date')) ? params.get('event_date') : '' } : {}) }, status: 'draft' }), [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false), [uploadBusy, setUploadBusy] = useState(false);
+  const blocker = useBlocker(({ currentLocation, nextLocation }) => (dirty || uploadBusy) && currentLocation.pathname !== nextLocation.pathname);
   const catalog = useCmsData('/api/curriculum/catalog');
   useEffect(() => {
     const controller = new AbortController();
     if (id) cmsRequest(`/api/cms/content/${id}`, { signal: controller.signal }).then(setForm).catch(e => { if (!controller.signal.aborted) setError(e.message); });
     return () => controller.abort();
   }, [id, params]);
-  useEffect(() => { const warn = e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } }; window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn); }, [dirty]);
+  useEffect(() => { const warn = e => { if (dirty || uploadBusy) { e.preventDefault(); e.returnValue = ''; } }; window.addEventListener('beforeunload', warn); return () => window.removeEventListener('beforeunload', warn); }, [dirty, uploadBusy]);
   const patch = values => { setForm(old => ({ ...old, ...values })); setDirty(true); setNotice(''); };
-  const field = (name, value) => patch({ payload: { ...form.payload, [name]: value } });
+  const field = (name, value) => { setForm(old => ({ ...old, payload: { ...old.payload, [name]: value } })); setDirty(true); setNotice(''); };
   async function save(event) {
-    event.preventDefault(); if (busy) return; setBusy(true); setError('');
+    event.preventDefault(); if (busy || uploadBusy) return; setBusy(true); setError('');
     try {
       const { title, workspace_id, module, payload, version } = form;
       const saved = await cmsRequest(id ? `/api/cms/content/${id}` : '/api/cms/content', { method: id ? 'PUT' : 'POST', body: { title, workspace_id, module, payload, ...(version ? { version } : {}) } });
@@ -52,9 +53,10 @@ export default function ContentEditor({ me }) {
       <label>رابط المورد أو التسجيل (HTTPS)<input type="url" dir="ltr" value={form.payload.source_url} onChange={e => field('source_url', e.target.value)} placeholder="https://" /></label>
       <label>روابط المرفقات — رابط في كل سطر<textarea rows={3} dir="ltr" value={form.payload.attachments.join('\n')} onChange={e => field('attachments', e.target.value.split('\n'))} onBlur={() => field('attachments', form.payload.attachments.filter(Boolean))} placeholder="روابط PDF، مستندات أو ملفات منشورة" /></label>
       {['workshops', 'competitions'].includes(form.module) && <fieldset><legend>تفاصيل الموعد والتسجيل</legend><div className="cms-grid two">{[['event_date', 'تاريخ الفعالية', 'date'], ['registration_start', 'بداية التسجيل', 'date'], ['registration_end', 'نهاية التسجيل', 'date'], ['organizer', 'الجهة المنظمة'], ['audience', 'الفئة المستهدفة'], ['location', 'المكان']].map(([key, label, type]) => <label key={key}>{label}<input type={type || 'text'} value={form.payload[key] || ''} onChange={e => field(key, e.target.value)} /></label>)}</div>{form.module === 'competitions' && <label>رابط النتائج<input type="url" dir="ltr" value={form.payload.results} onChange={e => field('results', e.target.value)} /></label>}</fieldset>}
-      {(form.module === 'quiz' || form.module === 'teacher_resources' && form.payload.category === 'questions') && <ExamBuilder questions={form.payload.questions} onChange={value => field('questions', value)} workspaceId={form.workspace_id} bankAllowed={me.is_admin || workspace.modules.includes('quiz')} title={form.title} instructions={form.payload.body} />}
+      {(['quiz', 'worksheet'].includes(form.module) || form.module === 'teacher_resources' && form.payload.category === 'questions') && <ExamBuilder questions={form.payload.questions} onChange={value => field('questions', value)} workspaceId={form.workspace_id} bankAllowed={me.is_admin || workspace.modules.includes('quiz')} title={form.title} instructions={form.payload.body} />}
 
-      <div className="cms-actions"><button className="cms-primary" disabled={busy || form.status === 'archived'}>{busy ? 'جاري الحفظ…' : 'حفظ المسودة'}</button>{id && <><button type="button" disabled={busy || dirty || form.status === 'archived'} onClick={() => transition('review')}>إرسال للمراجعة</button>{canPublish && <><button type="button" disabled={busy || dirty} onClick={() => transition('published')}>نشر على المنصة</button><button type="button" disabled={busy || dirty} onClick={() => transition('archived')}>أرشفة وسحب من المنصة</button></>}{form.status === 'archived' && <button type="button" disabled={busy || dirty} onClick={() => transition('draft')}>استعادة كمسودة</button>}</>}</div>
+      {['film', 'story_video', 'initiatives', 'worksheet'].includes(form.module) && <MediaEditor value={form.payload.media || []} onChange={items => field('media', items)} workspaceId={form.workspace_id} module={form.module} onBusy={setUploadBusy} />}
+      <div className="cms-actions"><button className="cms-primary" disabled={busy || uploadBusy || form.status === 'archived'}>{busy ? 'جاري الحفظ…' : 'حفظ المسودة'}</button>{id && <><button type="button" disabled={busy || uploadBusy || dirty || form.status === 'archived'} onClick={() => transition('review')}>إرسال للمراجعة</button>{canPublish && <><button type="button" disabled={busy || uploadBusy || dirty} onClick={() => transition('published')}>نشر على المنصة</button><button type="button" disabled={busy || uploadBusy || dirty} onClick={() => transition('archived')}>أرشفة وسحب من المنصة</button></>}{form.status === 'archived' && <button type="button" disabled={busy || uploadBusy || dirty} onClick={() => transition('draft')}>استعادة كمسودة</button>}</>}</div>
       <p className="cms-muted">{dirty ? 'لديك تغييرات غير محفوظة. احفظي قبل مغادرة الصفحة.' : 'أي تعديل على مادة منشورة يبقى مسودة؛ النسخة المنشورة لا تتغير حتى تعيدي نشرها أو تسحبيها بالأرشفة.'}</p>
     </form>
   </>;

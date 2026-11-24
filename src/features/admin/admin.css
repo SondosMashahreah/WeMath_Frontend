@@ -22,3 +22,12 @@
 .cms-question .exam-preview { margin-top: 16px; }
 .cms-generator > div > div { margin-bottom: 18px; }
 @media (max-width: 640px) { .cms-variable { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cms-generator, .cms-bank-save { padding: 12px; } }
+.cms-team-types { display:flex; flex-wrap:wrap; gap:12px; margin:20px 0; }
+.cms-team-types button { flex:1; min-width:140px; padding:18px; border:1px solid #cbd7cc; border-radius:14px; background:#fffaf2; color:#294238; font:inherit; cursor:pointer; }
+.cms-team-types button[aria-pressed="true"] { background:#294238; color:#fffaf2; }
+.cms-team-types small { display:block; margin-top:8px; }
+.cms-media-drop { display:grid; gap:12px; padding:26px; border:2px dashed #cb7a3c; border-radius:16px; text-align:center; background:#fff8ed; }
+.cms-media-drop.dragging { background:#ffe5cc; }
+.cms-media-item { padding:16px; margin:12px 0; border:1px solid #d6ded5; border-radius:12px; }
+.cms-media-item img,.cms-media-item video { display:block; max-width:100%; max-height:320px; margin:12px auto; }
+.cms-media-drop progress { width:100%; }

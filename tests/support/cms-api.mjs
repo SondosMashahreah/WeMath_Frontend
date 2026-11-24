@@ -15,7 +15,7 @@ export function installCMSAPI() {
     if (path === '/api/cms/me') return ok({ id: admin ? 1 : 2, name: admin ? 'مديرة المنصة' : 'مدخل البيانات', is_admin: admin, modules, workspaces: workspaces.filter(w => admin || w.member_ids.includes(2)) });
     if (path === '/api/cms/staff') {
       if (!admin) return ok({ detail: 'غير مسموح' }, 403);
-      if (method === 'POST') { const row = { id: 2, name: body.full_name, username: body.username, active: true }; staff.push(row); return ok(row, 201); }
+      if (method === 'POST') { const row = { id: 2, name: body.full_name, username: body.username, email: body.email, team_type: body.team_type, active: true }; staff.push(row); if (body.create_workspace) workspaces.push({id:workspaces.length+1,name:body.full_name,team_type:body.team_type,modules:body.modules,member_ids:[2],can_publish:false,active:true,version:1}); return ok(row, 201); }
       return ok({ items: staff, total: staff.length });
     }
     if (path === '/api/cms/workspaces' && method === 'POST') { const row = { id: workspaces.length + 1, version: 1, ...body }; workspaces.push(row); return ok(row, 201); }

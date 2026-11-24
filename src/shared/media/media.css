@@ -1,0 +1,4 @@
+.wm-media-gallery { display:grid; gap:20px; margin:20px 0; }
+.wm-media-gallery figure { margin:0; }
+.wm-media-gallery img,.wm-media-gallery video { display:block; width:auto; max-width:100%; max-height:560px; border-radius:12px; margin:auto; }
+.wm-media-gallery figcaption { white-space:pre-wrap; line-height:1.8; text-align:center; margin:10px 0; }

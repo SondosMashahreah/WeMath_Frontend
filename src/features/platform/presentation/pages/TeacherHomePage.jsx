@@ -12,7 +12,7 @@ export default function TeacherHomePage({ account = false }) {
     await go("/", { replace: true });
     try { await logout(); } catch { /* Local session is cleared even if the server is unreachable. */ }
   }
-  return <HivePage title="المعلّم" hint={`أهلًا ${user.full_name}`} items={[["curriculum", "المنهاج والكتب"], ["plans", "تحضيراتي"], ["resources", "أنشطة وبنك أسئلة"], ["assessments", "اختباراتي"], ["workshops", "ورش المعلّمين"], ["account", "حسابي"]].map(([id, title]) => hiveItem(id, title))} onSelect={id => {
+  return <HivePage title="المعلّم" hint={`أهلًا ${user.full_name}`} items={[["curriculum", "المنهاج والكتب"], ["games", "ألعابي التعليمية"], ["plans", "تحضيراتي"], ["resources", "أنشطة وبنك أسئلة"], ["assessments", "اختباراتي"], ["workshops", "ورش المعلّمين"], ["account", "حسابي"]].map(([id, title]) => hiveItem(id, title))} onSelect={id => {
     if (["plans", "resources", "assessments"].includes(id)) {
       return;
     }

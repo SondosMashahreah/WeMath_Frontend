@@ -1,3 +1,4 @@
+import TeacherGamesPage from "../../features/platform/presentation/pages/TeacherGamesPage.jsx";
 import { lazy, Suspense } from "react";
 const AdminApp = lazy(() => import("../../features/admin/AdminApp.jsx"));
 import AppLayout from "../layouts/AppLayout.jsx";
@@ -67,6 +68,7 @@ export const routes = [{ path: "/admin/*", element: <Suspense fallback={<p dir="
       { element: <RequireAccount role="teacher" />, children: [
         { index: true, element: <TeacherHomePage /> },
         { path: "account", element: <TeacherHomePage account /> },
+        ...["games", "games/new", "games/:gameId"].map(path => ({ path, element: <TeacherGamesPage /> })),
         { path: "curriculum", children: [
           { index: true, element: <TeacherCurriculumPage /> },
           ...["grades/:grade", "grades/:grade/books/:bookId", "grades/:grade/books/:bookId/units/:unitId", "grades/:grade/books/:bookId/units/:unitId/lessons/:lessonId"].map(path => ({ path, element: <TeacherCurriculumPage /> })),
